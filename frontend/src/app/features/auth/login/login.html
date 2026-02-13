@@ -1,0 +1,41 @@
+<div class="background">
+  <div class="login-card">
+    <h2>Welcome Back 👋</h2>
+    <p class="subtitle">Sign in to continue</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="input-group">
+        <input
+          type="text"
+          placeholder="Username"
+          [value]="userName()"
+          (input)="userName.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="input-group">
+        <input
+          type="password"
+          placeholder="Password"
+          [value]="password()"
+          (input)="password.set($any($event.target).value)"
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="!isValid() || isLoading()"
+      >
+        @if (isLoading()) {
+          <span class="loader"></span>
+        } @else {
+          Login
+        }
+      </button>
+    </form>
+
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+  </div>
+</div>
