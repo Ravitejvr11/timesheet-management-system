@@ -4,6 +4,8 @@ using Timesheet.Infrastructure.Persistence.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Timesheet.Infrastructure.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,11 +40,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Register DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
