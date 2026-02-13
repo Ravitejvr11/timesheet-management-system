@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LoginRequest } from '@core/models/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 
@@ -11,8 +12,11 @@ import { AuthService } from '@core/services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
+
 export class Login {
   private authService = inject(AuthService);
+  private router = inject(Router);
+
 
   userName = signal('');
   password = signal('');
@@ -37,8 +41,8 @@ export class Login {
 
     this.authService.login(payload).subscribe({
       next: () => {
-        console.log('Login successful');
         this.isLoading.set(false);
+        this.router.navigate(['/dashboard']);
       },
       error: () => {
         this.errorMessage.set('Invalid username or password');
