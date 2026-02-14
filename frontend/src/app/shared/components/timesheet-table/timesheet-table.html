@@ -35,6 +35,10 @@
     </div>
   </div>
 
+   @if (loading()) {
+    <app-spinner [overlay]="true"></app-spinner>
+  }
+
   <!-- =========================
        TABLE
   ========================== -->

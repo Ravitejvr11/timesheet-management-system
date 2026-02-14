@@ -17,10 +17,21 @@ import { TimesheetTable } from 'src/app/shared/components/timesheet-table/timesh
 import { Store } from '@ngrx/store';
 import { timesheetFeature } from 'src/app/store/timesheet/timesheet.reducer';
 import { TimesheetActions } from 'src/app/store/timesheet/timesheet.action';
+import { Dialog } from 'src/app/shared/components/dialog/dialog';
+import { AddTimesheetForm } from 'src/app/shared/components/add-timesheet-form/add-timesheet-form';
+import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
+import { Actions, ofType } from '@ngrx/effects';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, TimesheetTable, TimesheetStats],
+  imports: [
+    CommonModule,
+    TimesheetTable,
+    TimesheetStats,
+    Dialog,
+    AddTimesheetForm,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -28,6 +39,13 @@ export class Dashboard implements OnInit {
   private store = inject(Store);
   private authStore = inject(AuthStore);
   private elementRef = inject(ElementRef);
+  private actions$ = inject(Actions);
+  loading = this.store.selectSignal(
+    timesheetFeature.selectLoading,
+  );
+
+
+  isAddDialogOpen = signal(false);
 
   projects = this.store.selectSignal(timesheetFeature.selectProjects);
   timesheets = this.store.selectSignal(timesheetFeature.selectTimesheets);
@@ -44,6 +62,7 @@ export class Dashboard implements OnInit {
     return this.projects().find((p) => p.id === id)?.name;
   });
 
+  // For data table
   dataSource = computed<TimesheetRow[]>(() => {
     const timesheets = this.timesheets();
     const projects = this.projects();
@@ -70,6 +89,24 @@ export class Dashboard implements OnInit {
 
       return (): void => document.removeEventListener('click', handleClick);
     });
+
+    this.actions$
+      .pipe(
+        ofType(TimesheetActions.createTimesheetSuccess),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => {
+        this.closeAddDialog();
+
+        const selectedProjectId = this.selectedProjectId();
+        if (selectedProjectId) {
+          this.store.dispatch(
+            TimesheetActions.loadTimesheets({
+              projectId: selectedProjectId,
+            }),
+          );
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -108,5 +145,23 @@ export class Dashboard implements OnInit {
       }),
     );
     this.isDropdownOpen.set(false);
+  }
+
+  openAddDialog(): void {
+    this.isAddDialogOpen.set(true);
+  }
+
+  closeAddDialog(): void {
+    this.isAddDialogOpen.set(false);
+  }
+
+  handleAddTimesheet(payload: AddTimesheetPayload): void {
+    this.store.dispatch(
+      TimesheetActions.createTimesheet({
+        projectId: payload.projectId,
+        weekStartDate: payload.weekFrom,
+        weekEndDate: payload.weekTo,
+      }),
+    );
   }
 }

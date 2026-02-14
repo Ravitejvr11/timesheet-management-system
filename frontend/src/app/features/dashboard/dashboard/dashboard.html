@@ -43,7 +43,21 @@
     [totalNonBillableHours]="getTotalNonBillableHours()" [totalWeeks]="timesheets().length"
     [totalProjects]="projects().length"></app-timesheet-stats>
 
-  <app-timesheet-table [dataSource]="dataSource()"></app-timesheet-table>
+  <div class="dashboard-actions">
+    <button type="button" class="add-timesheet-btn" (click)="openAddDialog()">
+      + Add Timesheet
+    </button>
+  </div>
+
+
+  <app-timesheet-table [dataSource]="dataSource()" [loading]="loading()"></app-timesheet-table>
+
+  <app-dialog [isOpen]="isAddDialogOpen()" (closed)="closeAddDialog()">
+    <app-add-timesheet-form [projects]="projects()" (_cancel)="closeAddDialog()"
+      (_submit)="handleAddTimesheet($event)"></app-add-timesheet-form>
+
+  </app-dialog>
+
 
 </section>
 

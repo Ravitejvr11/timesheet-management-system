@@ -16,5 +16,14 @@ export const TimesheetActions = createActionGroup({
     'Load Timesheets Failure': props<{ error: string }>(),
 
     'Select Project': props<{ projectId: number }>(),
+    'Create Timesheet': props<{
+      projectId: number;
+      weekStartDate: string;
+      weekEndDate: string;
+    }>(),
+
+    'Create Timesheet Success': emptyProps(),
+
+    'Create Timesheet Failure': props<{ error: string }>(),
   },
 });

@@ -1,0 +1,51 @@
+<div class="add-timesheet-form">
+
+  <h2>Add Timesheet</h2>
+
+  <!-- Project -->
+  <div class="form-group">
+    <label for="addProject">Project</label>
+    <select id="addProject" (change)="projectId.set(+$any($event.target).value)">
+      <option value="">Select project</option>
+
+      @for (project of projects(); track project.id) {
+      <option [value]="project.id">
+        {{ project.name }}
+      </option>
+      }
+    </select>
+  </div>
+
+  <!-- Week Selection -->
+  <div class="form-group">
+    <label for="weekFromAdd">Select Week (Monday only)</label>
+
+    <input id="weekFromAdd" type="date" [min]="minDate()" [value]="weekFrom()"
+      (change)="setWeek($any($event.target).value)" />
+
+    @if (weekFrom() && !isMonday(weekFrom())) {
+    <span class="error-text">
+      Please select a Monday.
+    </span>
+    }
+
+    @if (weekTo()) {
+    <span class="week-preview">
+      Week ends on {{ weekTo() }}
+    </span>
+    }
+  </div>
+
+
+  <!-- Actions -->
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="_cancel.emit()">
+      Cancel
+    </button>
+
+    <button type="button" class="btn-primary" [disabled]="!isValid()" (click)="onSubmit()">
+      Create
+    </button>
+  </div>
+
+</div>
