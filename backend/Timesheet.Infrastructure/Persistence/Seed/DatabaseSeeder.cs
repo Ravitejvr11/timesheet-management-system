@@ -9,5 +9,7 @@ public static class DatabaseSeeder
         await context.Database.MigrateAsync();
 
         await UserSeeder.SeedAsync(context);
+        await ProjectSeeder.SeedAsync(context);
+        await RelationSeeder.SeedAsync(context);
     }
 }

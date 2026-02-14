@@ -50,9 +50,9 @@ public sealed class AuthService(
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new Claim("userId", user.Id.ToString()),
+            new Claim("userName", user.UserName),
+            new Claim("role", user.Role.ToString())
         };
 
         var expires = DateTime.UtcNow.AddMinutes(

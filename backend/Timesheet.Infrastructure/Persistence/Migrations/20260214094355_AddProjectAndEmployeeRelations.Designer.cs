@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Timesheet.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Timesheet.Infrastructure.Persistence;
 namespace Timesheet.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260214094355_AddProjectAndEmployeeRelations")]
+    partial class AddProjectAndEmployeeRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,91 +105,6 @@ namespace Timesheet.Infrastructure.Persistence.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Timesheet.Domain.Entities.Timesheet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ApprovedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ApprovedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("SubmittedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("TotalBillableHours")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("TotalNonBillableHours")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateOnly>("WeekEndDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("WeekStartDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApprovedByUserId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Timesheets");
-                });
-
-            modelBuilder.Entity("Timesheet.Domain.Entities.TimesheetEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("BillableHours")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("NonBillableHours")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("TimesheetId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateOnly>("WorkDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TimesheetId");
-
-                    b.ToTable("TimesheetEntries");
-                });
-
             modelBuilder.Entity("Timesheet.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -256,50 +174,9 @@ namespace Timesheet.Infrastructure.Persistence.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Timesheet.Domain.Entities.Timesheet", b =>
-                {
-                    b.HasOne("Timesheet.Domain.Entities.User", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByUserId");
-
-                    b.HasOne("Timesheet.Domain.Entities.User", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Timesheet.Domain.Entities.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApprovedByUser");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("Timesheet.Domain.Entities.TimesheetEntry", b =>
-                {
-                    b.HasOne("Timesheet.Domain.Entities.Timesheet", "Timesheet")
-                        .WithMany("Entries")
-                        .HasForeignKey("TimesheetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Timesheet");
-                });
-
             modelBuilder.Entity("Timesheet.Domain.Entities.Project", b =>
                 {
                     b.Navigation("EmployeeProjects");
-                });
-
-            modelBuilder.Entity("Timesheet.Domain.Entities.Timesheet", b =>
-                {
-                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginRequest } from '@core/models/auth/auth.model';
+import type { LoginRequest } from '@core/models/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 
 @Component({
@@ -12,11 +12,16 @@ import { AuthService } from '@core/services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-
 export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  constructor() {
+    const token = this.authService.getToken();
+    if (token) {
+      this.router.navigate(['/dashboard'])
+    }
+  }
 
   userName = signal('');
   password = signal('');
@@ -28,7 +33,7 @@ export class Login {
       this.userName().trim().length > 0 && this.password().trim().length > 0,
   );
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     if (!this.isValid()) return;
 
     this.isLoading.set(true);

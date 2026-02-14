@@ -1,0 +1,100 @@
+.app-header {
+  width: 100%;
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+
+  border-bottom: 1px solid var(--glass-border);
+
+  color: var(--text-light);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Logo */
+.logo {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 14px;
+  opacity: 0.8;
+  transition: var(--transition);
+}
+
+nav a:hover,
+nav a.active {
+  opacity: 1;
+  border-bottom: 2px solid var(--text-light);
+}
+
+/* Logout Button */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--button-border);
+
+  background: var(--button-bg);
+  color: var(--text-light);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.logout-btn:hover {
+  background: var(--button-bg-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .app-header {
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logout-btn {
+    order: 2;
+  }
+}
+
+.user-name {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

@@ -14,10 +14,17 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Project> Projects => Set<Project>();
+    public DbSet<EmployeeProject> EmployeeProjects => Set<EmployeeProject>();
+    public DbSet<EmployeeManager> EmployeeManagers => Set<EmployeeManager>();
+    public DbSet<Domain.Entities.Timesheet> Timesheets => Set<Domain.Entities.Timesheet>();
+    public DbSet<TimesheetEntry> TimesheetEntries => Set<TimesheetEntry>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppContext).Assembly);
+        base.OnModelCreating(modelBuilder);
     }
 
     public override async Task<int> SaveChangesAsync(

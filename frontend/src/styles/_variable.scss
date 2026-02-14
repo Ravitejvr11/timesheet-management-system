@@ -1,0 +1,46 @@
+:root {
+  /* Brand Gradient */
+  --primary-1: #667eea;
+  --primary-2: #764ba2;
+  --primary-3: #6b73ff;
+  --primary-4: #000dff;
+
+  /* Text */
+  --text-light: #ffffff;
+  --text-dark: #1f1f1f;
+  --text-muted: rgba(255, 255, 255, 0.7);
+
+  /* Surfaces */
+  --surface-white: #ffffff;
+  --surface-input: rgba(255, 255, 255, 0.2);
+  --surface-input-focus: rgba(255, 255, 255, 0.3);
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(12px);
+
+  /* Borders */
+  --border-light: rgba(255, 255, 255, 0.2);
+
+  /* States */
+  --danger: #ff6b6b;
+  --danger-light: #ffcccc;
+
+  /* Buttons */
+  --button-bg: rgba(255, 255, 255, 0.15);
+  --button-bg-hover: rgba(255, 255, 255, 0.25);
+  --button-border: rgba(255, 255, 255, 0.3);
+
+  /* Shadows */
+  --shadow-soft: 0 8px 25px rgba(0, 0, 0, 0.25);
+  --shadow-strong: 0 15px 35px rgba(0, 0, 0, 0.4);
+
+  /* Radius */
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  /* Transition */
+  --transition: all 0.3s ease;
+}
