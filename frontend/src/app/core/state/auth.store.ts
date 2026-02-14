@@ -1,9 +1,9 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import type { JwtPayload } from '@core/models/auth/auth.model';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthStore {
   private _token = signal<string | null>(localStorage.getItem('token'));
@@ -13,6 +13,22 @@ export class AuthStore {
   readonly user = computed(() => this._user());
   readonly isAuthenticated = computed(() => !!this._token());
   readonly role = computed(() => this._user()?.role ?? null);
+
+  readonly isExpired = computed(() => {
+    const user = this._user();
+    if (!user) return true;
+
+    const now = Math.floor(Date.now() / 1000);
+    return user.exp < now;
+  });
+
+  constructor() {
+    effect(() => {
+      if (this._token() && this.isExpired()) {
+        this.clear();
+      }
+    });
+  }
 
   setToken(token: string): void {
     localStorage.setItem('token', token);

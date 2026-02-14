@@ -43,4 +43,10 @@
 
   /* Transition */
   --transition: all 0.3s ease;
+
+  /* Dropdown Glass */
+  --dropdown-bg: rgba(255, 255, 255, 0.82);
+  --dropdown-hover: rgba(255, 255, 255, 0.85);
+  --dropdown-blur: blur(10px);
+  --dropdown-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
 }

@@ -1,1 +1,203 @@
-<p>timesheet-table works!</p>
+<div class="glass-card table-wrapper">
+  <div class="table-search">
+    <div class="search-wrapper">
+
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+        />
+        <line
+          x1="16.65"
+          y1="16.65"
+          x2="21"
+          y2="21"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+      </svg>
+
+      <input
+        type="text"
+        placeholder="Search by project..."
+        [value]="search()"
+        (input)="search.set($any($event.target).value); emitFilters()"
+      />
+    </div>
+  </div>
+
+  <!-- =========================
+       TABLE
+  ========================== -->
+
+  <table>
+    <thead>
+      <tr>
+
+        <th>Project Code</th>
+        <th>Project Name</th>
+
+        <!-- WEEK -->
+        <th
+          class="filterable"
+          (click)="toggleFilter('week'); $event.stopPropagation()"
+        >
+          Week ▾
+
+          @if (activeFilter() === 'week') {
+            <div
+            class="filter-popover"
+            tabindex="0"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()"
+            >
+              <input
+                type="date"
+                [value]="weekFrom()"
+                (change)="weekFrom.set($any($event.target).value); emitFilters()"
+              />
+              <input
+                type="date"
+                [value]="weekTo()"
+                (change)="weekTo.set($any($event.target).value); emitFilters()"
+              />
+            </div>
+          }
+        </th>
+
+        <!-- STATUS -->
+        <th
+          class="filterable"
+          (click)="toggleFilter('status'); $event.stopPropagation()"
+        >
+          Status ▾
+
+          @if (activeFilter() === 'status') {
+            <div
+              class="filter-popover"
+              tabindex="0"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()">
+              <select
+                [value]="status()"
+                (change)="status.set($any($event.target).value); emitFilters()"
+              >
+                <option value="">All</option>
+
+                @for (s of statusOptions; track s.value) {
+                  <option [value]="s.value">
+                    {{ s.label }}
+                  </option>
+                }
+              </select>
+            </div>
+          }
+        </th>
+
+        <!-- SUBMITTED -->
+        <th
+          class="filterable"
+          (click)="toggleFilter('submitted'); $event.stopPropagation()"
+        >
+          Submitted ▾
+
+          @if (activeFilter() === 'submitted') {
+            <div
+              class="filter-popover"
+              tabindex="0"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+              >
+              <input
+                type="date"
+                [value]="submitted()"
+                (change)="submitted.set($any($event.target).value); emitFilters()"
+              />
+            </div>
+          }
+        </th>
+
+        <!-- APPROVED -->
+        <th
+          class="filterable"
+          (click)="toggleFilter('approved'); $event.stopPropagation()"
+        >
+          Approved ▾
+
+          @if (activeFilter() === 'approved') {
+            <div
+              class="filter-popover"
+              tabindex="0"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+            >
+              <input
+                type="date"
+                [value]="approved()"
+                (change)="approved.set($any($event.target).value); emitFilters()"
+              />
+            </div>
+          }
+        </th>
+
+        <th>Billable</th>
+        <th>Non-Billable</th>
+        <th>Total</th>
+
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @if (dataSource().length === 0) {
+        <tr>
+          <td colspan="9" class="empty">
+            No timesheets found
+          </td>
+        </tr>
+      }
+
+      @for (row of dataSource(); track row.id) {
+
+        <tr>
+
+          <td>{{ row.projectCode }}</td>
+          <td>{{ row.projectName }}</td>
+
+          <td>
+            {{ row.weekStartDate }} -
+            {{ row.weekEndDate }}
+          </td>
+
+          <td>
+            <span
+              class="status"
+              [ngClass]="getStatusClass(row.status)"
+            >
+              {{ getStatusLabel(row.status) }}
+            </span>
+          </td>
+
+          <td>{{ row.submittedAt ?? '-' }}</td>
+          <td>{{ row.approvedAt ?? '-' }}</td>
+
+          <td>{{ row.totalBillableHours }}</td>
+          <td>{{ row.totalNonBillableHours }}</td>
+          <td>{{ getTotalHours(row) }}</td>
+
+        </tr>
+
+      }
+
+    </tbody>
+  </table>
+</div>

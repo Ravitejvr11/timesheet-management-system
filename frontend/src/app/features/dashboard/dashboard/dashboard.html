@@ -1,21 +1,50 @@
-<div class="stats-grid">
-  <div class="glass-card stat-card">
-    <h3>Total Hours</h3>
-    <p class="stat-value">128h</p>
+@if (isEmployee()) {
+
+<section class="dashboard">
+  <!-- Project Selector -->
+  <div class="glass-card project-selector">
+
+    <label for="projectSelect">
+      Project
+    </label>
+
+    <div class="custom-select">
+
+      <button type="button" class="select-trigger" (click)="toggleDropdown()" aria-haspopup="listbox"
+        [attr.aria-expanded]="isDropdownOpen()">
+        <span>
+          {{ selectedProjectName() ?? 'Select Project' }}
+        </span>
+
+        <svg class="arrow" [class.open]="isDropdownOpen()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+          width="16" height="16">
+          <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+
+
+      @if (isDropdownOpen()) {
+      <div class="select-options glass-card">
+        @for (project of projects(); track project.id) {
+        <div class="option" tabindex="0" (click)="selectProject(project)" (keydown.enter)="selectProject(project)"
+          (keydown.space)="selectProject(project)">
+          {{ project.name }} ({{ project.code }})
+        </div>
+        }
+      </div>
+      }
+
+    </div>
+
   </div>
 
-  <div class="glass-card stat-card">
-    <h3>This Week</h3>
-    <p class="stat-value">32h</p>
-  </div>
+  <app-timesheet-stats [totalBillableHours]="getTotalBillableHours()"
+    [totalNonBillableHours]="getTotalNonBillableHours()" [totalWeeks]="timesheets().length"
+    [totalProjects]="projects().length"></app-timesheet-stats>
 
-  <div class="glass-card stat-card">
-    <h3>Pending Approvals</h3>
-    <p class="stat-value">3</p>
-  </div>
+  <app-timesheet-table [dataSource]="dataSource()"></app-timesheet-table>
 
-  <div class="glass-card stat-card">
-    <h3>Projects</h3>
-    <p class="stat-value">5</p>
-  </div>
-</div>
+</section>
+
+}
