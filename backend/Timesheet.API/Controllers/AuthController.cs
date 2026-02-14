@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Timesheet.Application.Abstractions.Auth;
-using Timesheet.Application.DTOs.Auth;
+using Timesheet.Application.Auth.DTO;
+using Timesheet.Application.Auth.Interfaces;
 
 namespace Timesheet.API.Controllers;
 

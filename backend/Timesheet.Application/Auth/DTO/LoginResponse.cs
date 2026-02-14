@@ -1,4 +1,4 @@
-namespace Timesheet.Application.DTOs.Auth;
+namespace Timesheet.Application.Auth.DTO;
 
 public sealed record LoginResponse(
     string Token,

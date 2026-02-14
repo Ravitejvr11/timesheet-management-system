@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Timesheet.Application.Abstractions.Auth;
+using Timesheet.Application.Auth.Interfaces;
 using Timesheet.Infrastructure.Persistence;
 using Timesheet.Infrastructure.Services.Auth;
 

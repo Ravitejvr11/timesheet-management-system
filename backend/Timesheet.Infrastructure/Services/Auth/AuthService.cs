@@ -5,8 +5,8 @@ using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Timesheet.Application.Abstractions.Auth;
-using Timesheet.Application.DTOs.Auth;
+using Timesheet.Application.Auth.Interfaces;
+using Timesheet.Application.Auth.DTO;
 using Timesheet.Domain.Entities;
 using Timesheet.Infrastructure.Persistence;
 

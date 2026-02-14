@@ -1,6 +1,6 @@
-using Timesheet.Application.DTOs.Auth;
+using Timesheet.Application.Auth.DTO;
 
-namespace Timesheet.Application.Abstractions.Auth;
+namespace Timesheet.Application.Auth.Interfaces;
 
 public interface IAuthService
 {
