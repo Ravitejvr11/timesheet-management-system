@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Timesheet.Application.Auth.Interfaces;
 using Timesheet.Application.Projects.Interfaces;
 using Timesheet.Application.Timesheets.Interfaces;
+using Timesheet.Application.Timesheets.Strategies;
 using Timesheet.Infrastructure.Persistence;
 using Timesheet.Infrastructure.Services.Auth;
 using Timesheet.Infrastructure.Services.Project;
@@ -27,6 +28,8 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<ITimesheetService, TimesheetService>();
+        services.AddScoped<ITimesheetStatusStrategy, SubmitTimesheetStrategy>();
+
 
         return services;
     }

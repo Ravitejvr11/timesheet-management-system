@@ -1,14 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Timesheet.Application.Timesheets.DTO;
 using Timesheet.Application.Timesheets.Interfaces;
+using Timesheet.Application.Timesheets.Strategies;
 using Timesheet.Domain.Entities;
 using Timesheet.Domain.Enums;
 using Timesheet.Infrastructure.Persistence;
 
 namespace Timesheet.Infrastructure.Services.Timesheet;
 
-public class TimesheetService(AppDbContext context) : ITimesheetService
+public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatusStrategy> strategies) : ITimesheetService
 {
+    private readonly IEnumerable<ITimesheetStatusStrategy> _strategies = strategies;
+
     public async Task<List<TimesheetDto>> GetTimesheetsForEmployeeAsync(
         Guid employeeId,
         int projectId)
@@ -102,14 +105,17 @@ public class TimesheetService(AppDbContext context) : ITimesheetService
         if (timesheet is null)
             throw new Exception("Timesheet not found.");
 
-        if (timesheet.Status != TimesheetStatus.Draft)
-            throw new Exception("Only draft timesheets can be submitted.");
+        var strategy = _strategies
+            .FirstOrDefault(s => s.CanHandle(timesheet.Status));
 
-        timesheet.Status = TimesheetStatus.Submitted;
-        timesheet.SubmittedAt = DateTime.UtcNow;
+        if (strategy is null)
+            throw new Exception("Invalid timesheet state transition.");
+
+        strategy.Apply(timesheet, employeeId);
 
         await context.SaveChangesAsync();
     }
+
 
     public async Task ApproveTimesheetAsync(
         Guid managerId,
