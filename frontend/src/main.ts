@@ -4,12 +4,25 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { App } from './app/app';
 import { routes } from './app/app.routes';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { timesheetFeature } from './app/store/timesheet/timesheet.reducer';
+import { TimesheetEffects } from './app/store/timesheet/timesheet.effects';
+
+
 
 bootstrapApplication(App, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    )
-  ]
-}).catch(err => console.error(err));
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideStore({
+      [timesheetFeature.name]: timesheetFeature.reducer,
+    }),
+    provideEffects([TimesheetEffects]),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: false,
+    }),
+  ],
+}).catch((err) => console.error(err));

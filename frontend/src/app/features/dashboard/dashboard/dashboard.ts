@@ -1,14 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, ElementRef, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+} from '@angular/core';
 import type { OnInit } from '@angular/core';
 import type { Project } from '@core/models/project/project.model';
 import type { TimesheetRow } from '@core/models/timesheet/timesheet-row.model';
-import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
-import { ProjectService } from '@core/services/project.service';
 import { AuthStore } from '@core/state/auth.store';
 import { buildTimesheetDataSource } from 'src/app/shared/builders/timesheet-datasource.builder';
 import { TimesheetStats } from 'src/app/shared/components/timesheet-stats/timesheet-stats';
 import { TimesheetTable } from 'src/app/shared/components/timesheet-table/timesheet-table';
+import { Store } from '@ngrx/store';
+import { timesheetFeature } from 'src/app/store/timesheet/timesheet.reducer';
+import { TimesheetActions } from 'src/app/store/timesheet/timesheet.action';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,12 +25,16 @@ import { TimesheetTable } from 'src/app/shared/components/timesheet-table/timesh
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  private projectService = inject(ProjectService);
+  private store = inject(Store);
   private authStore = inject(AuthStore);
   private elementRef = inject(ElementRef);
 
-  projects = signal<Project[]>([]);
-  selectedProjectId = signal<number | null>(null);
+  projects = this.store.selectSignal(timesheetFeature.selectProjects);
+  timesheets = this.store.selectSignal(timesheetFeature.selectTimesheets);
+
+  selectedProjectId = this.store.selectSignal(
+    timesheetFeature.selectSelectedProjectId,
+  );
   isDropdownOpen = signal(false);
 
   user = computed(() => this.authStore.user());
@@ -31,20 +43,6 @@ export class Dashboard implements OnInit {
     const id = this.selectedProjectId();
     return this.projects().find((p) => p.id === id)?.name;
   });
-
-  timesheets = signal<TimesheetViewModel[]>([
-    {
-      id: 1,
-      projectId: 1,
-      weekStartDate: '2024-02-02',
-      weekEndDate: '2024-02-08',
-      totalBillableHours: 40,
-      totalNonBillableHours: 2,
-      status: 1,
-      submittedAt: '2024-02-09',
-      approvedAt: null,
-    },
-  ]);
 
   dataSource = computed<TimesheetRow[]>(() => {
     const timesheets = this.timesheets();
@@ -75,24 +73,17 @@ export class Dashboard implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProjects();
-  }
-
-  private loadProjects(): void {
-    this.projectService.getMyProjects().subscribe({
-      next: (data) => {
-
-        this.projects.set(data);
-        if (data.length > 0) {
-          this.selectedProjectId.set(data[0].id);
-        }
-      },
-    });
+    this.store.dispatch(TimesheetActions.loadProjects());
   }
 
   onProjectChange(event: Event): void {
     const value = Number((event.target as HTMLSelectElement).value);
-    this.selectedProjectId.set(value);
+
+    this.store.dispatch(
+      TimesheetActions.selectProject({
+        projectId: value,
+      }),
+    );
   }
 
   getTotalBillableHours(): number {
@@ -111,7 +102,11 @@ export class Dashboard implements OnInit {
   }
 
   selectProject(project: Project): void {
-    this.selectedProjectId.set(project.id);
+    this.store.dispatch(
+      TimesheetActions.selectProject({
+        projectId: project.id,
+      }),
+    );
     this.isDropdownOpen.set(false);
   }
 }
