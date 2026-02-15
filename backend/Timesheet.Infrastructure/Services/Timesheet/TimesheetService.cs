@@ -160,61 +160,80 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<EmployeeProjectHoursSummary>> GetEmployeeProjectWiseSummary(TimeReportFilter filter)
+    public async Task<ProjectHoursSummary> GetProjectWiseHoursSummary(TimeReportFilter filter)
     {
         var query = BuildBaseQuery(filter);
 
-        var result = await query
-            .GroupBy(e => new
+        var groupedData = await query
+                                    .GroupBy(e => 1)
+                                    .Select(g => new
+                                    {
+                                        TotalBillableHours = g.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                        TotalNonBillableHours = g.Sum(x => (decimal?)x.NonBillableHours) ?? 0,
+
+                                        Projects = g
+                                            .GroupBy(e => new
+                                            {
+                                                e.Timesheet.ProjectId,
+                                                ProjectName = e.Timesheet.Project.Name
+                                            })
+                                            .Select(pg => new
+                                            {
+                                                pg.Key.ProjectId,
+                                                pg.Key.ProjectName,
+
+                                                BillableHours = pg.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                                NonBillableHours = pg.Sum(x => (decimal?)x.NonBillableHours) ?? 0,
+
+                                                Employees = pg
+                                                    .GroupBy(e => new
+                                                    {
+                                                        e.Timesheet.EmployeeId,
+                                                        EmployeeName = e.Timesheet.Employee.UserName
+                                                    })
+                                                    .Select(eg => new
+                                                    {
+                                                        eg.Key.EmployeeId,
+                                                        eg.Key.EmployeeName,
+
+                                                        BillableHours = eg.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                                        NonBillableHours = eg.Sum(x => (decimal?)x.NonBillableHours) ?? 0
+                                                    })
+                                                    .ToList()
+                                            })
+                                            .ToList()
+                                    })
+                                    .FirstOrDefaultAsync();
+
+        // 🔹 Handle empty result
+        if (groupedData == null)
+        {
+            return new ProjectHoursSummary();
+        }
+
+        // 🔹 Map to DTO
+        return new ProjectHoursSummary
+        {
+            TotalBillableHours = groupedData.TotalBillableHours,
+            TotalNonBillableHours = groupedData.TotalNonBillableHours,
+
+            Projects = groupedData.Projects.Select(p => new ProjectBillableDto
             {
-                e.Timesheet.EmployeeId,
-                EmployeeName = e.Timesheet.Employee.UserName,
+                ProjectId = p.ProjectId,
+                ProjectName = p.ProjectName,
+                BillableHours = p.BillableHours,
+                NonBillableHours = p.NonBillableHours,
 
-                e.Timesheet.ProjectId,
-                ProjectName = e.Timesheet.Project.Name
-            })
-            .Select(g => new EmployeeProjectHoursSummary
-            {
-                EmployeeId = g.Key.EmployeeId,
-                EmployeeName = g.Key.EmployeeName,
+                Employees = p.Employees.Select(e => new EmployeeBillableDto
+                {
+                    EmployeeId = e.EmployeeId,
+                    EmployeeName = e.EmployeeName,
+                    BillableHours = e.BillableHours,
+                    NonBillableHours = e.NonBillableHours
+                }).ToList()
 
-                ProjectId = g.Key.ProjectId,
-                ProjectName = g.Key.ProjectName,
-
-                BillableHours = g.Sum(x => x.BillableHours),
-                NonBillableHours = g.Sum(x => x.NonBillableHours),
-
-                TotalHours = g.Sum(x => x.BillableHours + x.NonBillableHours)
-            })
-            .OrderBy(x => x.EmployeeName)
-            .ThenByDescending(x => x.TotalHours)
-            .ToListAsync();
-
-        return result;
-    }
-
-    public async Task<List<ProjectHoursSummary>> GetProjectWiseHoursSummary(TimeReportFilter filter)
-    {
-        var query = BuildBaseQuery(filter);
-
-        return await query
-            .GroupBy(e => new
-            {
-                e.Timesheet.ProjectId,
-                ProjectName = e.Timesheet.Project.Name
-            })
-            .Select(g => new ProjectHoursSummary
-            {
-                ProjectId = g.Key.ProjectId,
-                ProjectName = g.Key.ProjectName,
-
-                BillableHours = g.Sum(x => x.BillableHours),
-                NonBillableHours = g.Sum(x => x.NonBillableHours),
-
-                TotalHours = g.Sum(x => x.BillableHours + x.NonBillableHours)
-            })
-            .OrderByDescending(x => x.TotalHours)
-            .ToListAsync();
+            }).ToList()
+        };
     }
 
 
