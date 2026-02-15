@@ -5,4 +5,14 @@ namespace Timesheet.Application.Projects.Interfaces;
 public interface IProjectService
 {
     Task<List<ProjectDto>> GetProjectsForEmployeeAsync(Guid employeeId);
+
+    Task CreateProject(ProjectDto dto);
+
+    Task UpdateProject(ProjectDto dto);
+
+    Task Deactivate(int projectId);
+
+    Task Activate(int projectId);
+
+    Task Delete(int projectId);
 }
