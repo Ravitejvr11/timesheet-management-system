@@ -4,16 +4,25 @@ export const routes: Routes = [
   {
     path: '',
     redirectTo: 'auth',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'auth',
     loadChildren: () =>
-      import('@features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+      import('@features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'dashboard',
     loadChildren: () =>
-      import('@features/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES)
-  }
+      import('@features/dashboard/dashboard.routes').then(
+        (m) => m.DASHBOARD_ROUTES,
+      ),
+  },
+  {
+    path: 'forbidden',
+    loadComponent: () =>
+      import('./shared/components/permission-denied/permission-denied').then(
+        (m) => m.PermissionDenied,
+      ),
+  },
 ];

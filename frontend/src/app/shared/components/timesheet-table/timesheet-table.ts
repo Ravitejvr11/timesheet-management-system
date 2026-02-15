@@ -16,11 +16,12 @@ import {
   getTimesheetStatusLabel,
 } from '@core/models/timesheet/timesheet-status.util';
 import { Spinner } from '../spinner/spinner';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-timesheet-table',
   standalone: true,
-  imports: [CommonModule, Spinner],
+  imports: [CommonModule, Spinner, RouterModule],
   templateUrl: './timesheet-table.html',
   styleUrl: './timesheet-table.scss',
 })

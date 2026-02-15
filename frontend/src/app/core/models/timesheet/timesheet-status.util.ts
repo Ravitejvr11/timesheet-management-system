@@ -32,3 +32,15 @@ export function getTimesheetStatusClass(status: number): string {
       return 'draft';
   }
 }
+
+  export function toMinutes(value: string | null | undefined): number {
+    if (!value || !/^\d{2}:\d{2}$/.test(value)) {
+      return 0;
+    }
+
+    const [h, m] = value.split(':').map(Number);
+
+    if (isNaN(h) || isNaN(m)) return 0;
+
+    return h * 60 + m;
+  }

@@ -49,4 +49,31 @@
   --dropdown-hover: rgba(255, 255, 255, 0.85);
   --dropdown-blur: blur(10px);
   --dropdown-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+
+  /* Timesheet entry */
+  --ts-surface: rgba(255, 255, 255, 0.08);
+  --ts-border: rgba(255, 255, 255, 0.18);
+  --ts-border-soft: rgba(255, 255, 255, 0.08);
+  --ts-input-bg: rgba(255, 255, 255, 0.12);
+  --ts-input-border: rgba(255, 255, 255, 0.3);
+  --ts-weekend-bg: rgba(255, 255, 255, 0.05);
+  --ts-error-bg: rgba(220, 38, 38, 0.08);
+  --ts-error-border: rgba(220, 38, 38, 0.4);
+  --ts-error-text: #ff4d4f;
+
+  /* TEXT COLORS */
+  --ts-text-primary: #ffffff;
+  --ts-text-muted: rgba(255, 255, 255, 0.7);
+  --ts-text-soft: rgba(255, 255, 255, 0.85);
+
+  /* HOVER STATES */
+  --ts-hover-soft: rgba(255, 255, 255, 0.08);
+  --ts-hover-medium: rgba(255, 255, 255, 0.1);
+
+  /* BUTTON STATES */
+  --ts-btn-disabled-opacity: 0.5;
+
+  /* FOCUS RING */
+  --ts-focus-ring: var(--ts-border-soft);
+
 }

@@ -47,6 +47,7 @@
     <thead>
       <tr>
 
+        <th>Project Id</th>
         <th>Project Code</th>
         <th>Project Name</th>
 
@@ -174,6 +175,14 @@
 
         <tr>
 
+          <td>
+            <a
+              class="project-link"
+              [routerLink]="['timesheets', row.id, 'entry']"
+              >
+              {{ row.projectName }} - {{ row.id }}
+            </a>
+          </td>
           <td>{{ row.projectCode }}</td>
           <td>{{ row.projectName }}</td>
 

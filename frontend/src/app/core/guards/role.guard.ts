@@ -13,7 +13,7 @@ export const roleGuard: CanActivateFn = (
   const userRole = authStore.role();
 
   if (!userRole || !allowedRoles.includes(userRole)) {
-    router.navigate(['/dashboard']);
+    router.navigate(['/forbidden']);
     return false;
   }
 

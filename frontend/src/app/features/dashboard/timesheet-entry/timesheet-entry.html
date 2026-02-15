@@ -1,0 +1,103 @@
+<div class="entry-container">
+
+    <div class="back-row">
+    <button class="btn-back" (click)="goBack()">
+      ← Back to Dashboard
+    </button>
+  </div>
+
+  <div class="entry-header">
+
+    <div class="header-left">
+      <div>
+        <h2>Timesheet</h2>
+        <div class="week">
+          Week {{ weekDays[0].date | date:'ww yyyy' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-secondary">
+        Cancel
+      </button>
+
+      <button class="btn-primary" [disabled]="!hasAnyEntry()">
+        Save
+      </button>
+    </div>
+
+  </div>
+
+  <form [formGroup]="form">
+
+    <div class="timesheet-grid glass">
+
+      <!-- Empty top-left cell -->
+      <div class="grid header empty"></div>
+
+      <!-- Week Headers -->
+      @for (day of weekDays; let i = $index; track i) {
+      <div class="grid header" [class.weekend]="i >= 5">
+        <div>{{ day.label }}</div>
+        <div class="date">
+          {{ day.date | date:'dd MMM' }}
+        </div>
+      </div>
+      }
+
+      <!-- Total Column Header -->
+      <div class="grid header total-col">Total</div>
+
+      <!-- ================= BILLABLE ================= -->
+      <div class="grid row-label">Billable Hours</div>
+
+      <ng-container formArrayName="days">
+        @for (group of daysArray.controls; let i = $index; track i) {
+        <div class="grid cell" [class.weekend]="i >= 5" [class.invalid]="group.errors?.['maxExceeded']"
+          [formGroupName]="i">
+
+          <input type="text" inputmode="numeric" formControlName="billableTime"
+            (keydown)="onKeyDown($event, group.controls.billableTime)" />
+        </div>
+        }
+      </ng-container>
+
+      <div class="grid total-col">
+        {{ formatMinutes(grandTotal()) }}
+      </div>
+
+      <!-- ================= NON BILLABLE ================= -->
+      <div class="grid row-label">Non-Billable Hours</div>
+
+      <ng-container formArrayName="days">
+        @for (group of daysArray.controls; let i = $index; track i) {
+        <div class="grid cell" [class.weekend]="i >= 5" [class.invalid]="group.errors?.['maxExceeded']"
+          [formGroupName]="i">
+
+          <input type="text" inputmode="numeric" formControlName="nonBillableTime"
+            (keydown)="onKeyDown($event, group.controls.nonBillableTime)" />
+        </div>
+        }
+      </ng-container>
+
+      <div class="grid total-col muted">-</div>
+
+      <!-- ================= DAILY TOTAL ================= -->
+      <div class="grid row-label total-row-label">Daily Total</div>
+
+      @for (total of dayTotals(); let i = $index; track i) {
+      <div class="grid daily-total" [class.invalid]="total > 1440">
+        {{ formatMinutes(total) }}
+      </div>
+      }
+
+      <div class="grid total-col grand-total">
+        {{ formatMinutes(grandTotal()) }}
+      </div>
+
+    </div>
+
+  </form>
+
+</div>
