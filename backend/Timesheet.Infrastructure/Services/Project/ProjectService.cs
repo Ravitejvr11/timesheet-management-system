@@ -13,7 +13,7 @@ public class ProjectService(AppDbContext context, IMapper mapper) : IProjectServ
     public async Task<List<ProjectDto>> GetProjectsForEmployeeAsync(Guid employeeId)
     {
         return await context.EmployeeProjects
-            .Where(ep => ep.EmployeeId == employeeId)
+            .Where(ep => ep.EmployeeId == employeeId && ep.Project.Status == ProjectStatus.Active)
             .Include(ep => ep.Project)
             .Select(ep => new ProjectDto
             {

@@ -2,14 +2,6 @@ using Timesheet.Domain.Enums;
 
 namespace Timesheet.Application.Projects.DTO;
 
-//public record ProjectDto(
-//    int Id,
-//    string Name,
-//    string Code,
-//    string ClientName,
-//    bool IsBillable
-//);
-
 
 public class ProjectDto
 {
