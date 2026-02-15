@@ -35,7 +35,7 @@ public static class ProjectSeeder
             {
                 Name = "Internal HR Portal",
                 Code = "HRP003",
-                Status = ProjectStatus.OnHold,
+                Status = ProjectStatus.Inactive,
                 ClientName = "Internal",
                 IsBillable = false,
                 Description = "HR management portal"

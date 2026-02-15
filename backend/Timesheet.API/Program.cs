@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Timesheet.API.AutoMapper;
 using Timesheet.Infrastructure.DependencyInjection;
 using Timesheet.Infrastructure.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
 using Timesheet.Infrastructure.Persistence;
+using Timesheet.Infrastructure.Persistence.Seed;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +53,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
