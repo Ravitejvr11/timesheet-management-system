@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Timesheet.Application.Reports;
 using Timesheet.Application.Timesheets.DTO;
 using Timesheet.Application.Timesheets.Strategies;
 using Timesheet.Domain.Entities;
@@ -36,6 +37,7 @@ public class TimesheetServiceTests
         // Seed data
         _employee1 = Guid.NewGuid();
         _employee2 = Guid.NewGuid();
+        var managerId = Guid.NewGuid();
 
         var project1 = new Project { Id = 1, Name = "Project A" };
         var project2 = new Project { Id = 2, Name = "Project B" };
@@ -451,5 +453,118 @@ public class TimesheetServiceTests
         var ex = Assert.ThrowsAsync<Exception>(() => _service.RejectTimesheetAsync(managerId, timesheet.Id, comments));
         Assert.That(ex!.Message, Is.EqualTo("Only submitted timesheets can be rejected."));
     }
-}
 
+    [Test]
+    public async Task GetProjectWiseHoursSummary_ShouldReturnAggregatedData()
+    {
+        var managerId = Guid.NewGuid();
+        var employee1 = Guid.NewGuid();
+        var employee2 = Guid.NewGuid();
+
+        // Users
+        var user1 = new User { Id = employee1, UserName = "Alice" };
+        var user2 = new User { Id = employee2, UserName = "Bob" };
+        _context.Users.AddRange(user1, user2);
+
+        // Projects
+        var project1 = new Project { Id = 3, Name = "Project A", Status = ProjectStatus.Active };
+        var project2 = new Project { Id = 4, Name = "Project B", Status = ProjectStatus.Active };
+        _context.Projects.AddRange(project1, project2);
+
+        // Manager -> Employees
+        _context.EmployeeManagers.AddRange(
+            new EmployeeManager { ManagerId = managerId, EmployeeId = employee1 },
+            new EmployeeManager { ManagerId = managerId, EmployeeId = employee2 }
+        );
+
+        await _context.SaveChangesAsync();
+
+        // Timesheets
+        var ts1 = new Timesheet
+        {
+            Id = 5,
+            EmployeeId = employee1,
+            Employee = user1,            // navigation property
+            ProjectId = 3,
+            Project = project1,          // navigation property
+            WeekStartDate = new DateOnly(2026, 2, 10),
+            WeekEndDate = new DateOnly(2026, 2, 16),
+            Entries = new List<TimesheetEntry>()
+        };
+
+        var ts2 = new Timesheet
+        {
+            Id = 6,
+            EmployeeId = employee2,
+            Employee = user2,
+            ProjectId = 4,
+            Project = project2,
+            WeekStartDate = new DateOnly(2026, 2, 10),
+            WeekEndDate = new DateOnly(2026, 2, 16),
+            Entries = new List<TimesheetEntry>()
+        };
+
+        _context.Timesheets.AddRange(ts1, ts2);
+
+        // Timesheet entries
+        var te1 = new TimesheetEntry
+        {
+            TimesheetId = ts1.Id,
+            Timesheet = ts1,
+            WorkDate = new DateOnly(2026, 2, 10),
+            BillableHours = 5,
+            NonBillableHours = 2
+        };
+        var te2 = new TimesheetEntry
+        {
+            TimesheetId = ts1.Id,
+            Timesheet = ts1,
+            WorkDate = new DateOnly(2026, 2, 11),
+            BillableHours = 3,
+            NonBillableHours = 1
+        };
+        var te3 = new TimesheetEntry
+        {
+            TimesheetId = ts2.Id,
+            Timesheet = ts2,
+            WorkDate = new DateOnly(2026, 2, 10),
+            BillableHours = 4,
+            NonBillableHours = 1
+        };
+
+        _context.TimesheetEntries.AddRange(te1, te2, te3);
+        await _context.SaveChangesAsync();
+
+        // Filter for the report
+        var filter = new TimeReportFilter
+        {
+            FromDate = new DateOnly(2026, 2, 10),
+            ToDate = new DateOnly(2026, 2, 16)
+        };
+
+        // Act
+        var result = await _service.GetProjectWiseHoursSummary(managerId, filter);
+
+        // Assert total aggregation
+        Assert.That(result.TotalBillableHours, Is.EqualTo(5 + 3 + 4));
+        Assert.That(result.TotalNonBillableHours, Is.EqualTo(2 + 1 + 1));
+
+        // Assert project-level aggregation
+        var projectA = result.Projects.First(p => p.ProjectId == 3);
+        Assert.That(projectA.BillableHours, Is.EqualTo(5 + 3));
+        Assert.That(projectA.NonBillableHours, Is.EqualTo(2 + 1));
+
+        var projectB = result.Projects.First(p => p.ProjectId == 4);
+        Assert.That(projectB.BillableHours, Is.EqualTo(4));
+        Assert.That(projectB.NonBillableHours, Is.EqualTo(1));
+
+        // Assert employee-level aggregation
+        var aliceProjectA = projectA.Employees.First(e => e.EmployeeId == employee1);
+        Assert.That(aliceProjectA.BillableHours, Is.EqualTo(5 + 3));
+        Assert.That(aliceProjectA.NonBillableHours, Is.EqualTo(2 + 1));
+
+        var bobProjectB = projectB.Employees.First(e => e.EmployeeId == employee2);
+        Assert.That(bobProjectB.BillableHours, Is.EqualTo(4));
+        Assert.That(bobProjectB.NonBillableHours, Is.EqualTo(1));
+    }
+}
