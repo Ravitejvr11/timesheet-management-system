@@ -17,7 +17,7 @@ public interface ITimesheetService
 
     Task RejectTimesheetAsync(Guid managerId, int timesheetId, string comments);
 
-    Task<ProjectHoursSummary> GetProjectWiseHoursSummary(TimeReportFilter filter);
+    Task<ProjectHoursSummary> GetProjectWiseHoursSummary(Guid managerId,TimeReportFilter filter);
     Task<List<ManagerTimesheetDto>> GetTimesheetsForManagerAsync(Guid managerId);
 
 }

@@ -145,9 +145,9 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         await context.SaveChangesAsync();
     }
 
-    public async Task<ProjectHoursSummary> GetProjectWiseHoursSummary(TimeReportFilter filter)
+    public async Task<ProjectHoursSummary> GetProjectWiseHoursSummary(Guid managerId,TimeReportFilter filter)
     {
-        var query = BuildBaseQuery(filter);
+        var query = BuildBaseQuery(managerId, filter);
 
         var groupedData = await query
                                     .GroupBy(e => 1)
@@ -221,9 +221,19 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         };
     }
 
-    private IQueryable<TimesheetEntry> BuildBaseQuery(TimeReportFilter filter)
+    private IQueryable<TimesheetEntry> BuildBaseQuery(Guid managerId, TimeReportFilter filter)
     {
-        var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
+        var query = context.TimesheetEntries
+            .AsNoTracking()
+            .Where(e =>
+                e.WorkDate >= filter.FromDate &&
+                e.WorkDate <= filter.ToDate &&
+                context.EmployeeManagers
+                    .Any(me =>
+                        me.ManagerId == managerId &&
+                        me.EmployeeId == e.Timesheet.EmployeeId
+                    )
+            );
 
         if (filter.EmployeeIds != null && filter.EmployeeIds.Any())
         {
@@ -232,7 +242,10 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 
         if (filter.ProjectIds != null && filter.ProjectIds.Any())
         {
-            query = query.Where(e => filter.ProjectIds.Contains(e.Timesheet.ProjectId) && e.Timesheet.Project.Status == ProjectStatus.Active);
+            query = query.Where(e =>
+                filter.ProjectIds.Contains(e.Timesheet.ProjectId) &&
+                e.Timesheet.Project.Status == ProjectStatus.Active
+            );
         }
 
         return query;
@@ -296,13 +309,14 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
                 t.TotalNonBillableHours,
                 t.Status,
                 t.Comments,
-                t.Entries.Select(e => new TimesheetEntryDto(
-                    e.Id,
-                    e.WorkDate,
-                    e.BillableHours,
-                    e.NonBillableHours,
-                    e.Description
-                )).ToList()
+                t.Entries.Select(e => new TimesheetEntryDto()
+                {
+                    Id = e.Id,
+                    WorkDate = e.WorkDate,
+                    BillableHours = e.BillableHours,
+                    NonBillableHours = e.NonBillableHours,
+                    Description = e.Description
+                }).ToList()
             ))
             .ToListAsync();
     }
