@@ -10,6 +10,7 @@ export interface ProjectState {
   employees: Employee[];
   assignedEmployeeIds: string[];
   employeesLoading: boolean;
+  statusUpdating: boolean;
 }
 
 export const initialProjectState: ProjectState = {
@@ -20,4 +21,6 @@ export const initialProjectState: ProjectState = {
   employees: [],
   assignedEmployeeIds: [],
   employeesLoading: false,
+  statusUpdating: false,
 };
+

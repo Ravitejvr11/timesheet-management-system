@@ -1,6 +1,7 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { initialProjectState } from './project.state';
 import { ProjectActions } from './project.actions';
+import { ProjectStatus } from '@core/models/project/project.model';
 
 export const projectFeature = createFeature({
   name: 'project',
@@ -94,6 +95,44 @@ export const projectFeature = createFeature({
     on(ProjectActions.updateProjectFailure, (state, { error }) => ({
       ...state,
       loading: false,
+      error,
+    })),
+
+    on(ProjectActions.activateProject, (state) => ({
+      ...state,
+      statusUpdating: true,
+    })),
+
+    on(ProjectActions.activateProjectSuccess, (state, { id }) => ({
+      ...state,
+      loading: false,
+      projects: state.projects.map((p) =>
+        p.id === id ? { ...p, status: ProjectStatus.Active } : p,
+      ),
+    })),
+
+    on(ProjectActions.activateProjectFailure, (state, { error }) => ({
+      ...state,
+      statusUpdating: false,
+      error,
+    })),
+
+    on(ProjectActions.deactivateProject, (state) => ({
+      ...state,
+      statusUpdating: false,
+    })),
+
+    on(ProjectActions.activateProjectSuccess, (state, { id }) => ({
+      ...state,
+      statusUpdating: false,
+      projects: state.projects.map((p) =>
+        p.id === id ? { ...p, status: ProjectStatus.Active } : p,
+      ),
+    })),
+
+    on(ProjectActions.deactivateProjectFailure, (state, { error }) => ({
+      ...state,
+      statusUpdating: false,
       error,
     })),
   ),
