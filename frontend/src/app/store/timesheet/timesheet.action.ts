@@ -3,6 +3,7 @@ import type { Project } from '@core/models/project/project.model';
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
 import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
 import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
+import type { ManagerTimesheet } from '@core/models/timesheet/manager-timesheet.model';
 
 export const TimesheetActions = createActionGroup({
   source: 'Timesheet',
@@ -49,6 +50,20 @@ export const TimesheetActions = createActionGroup({
     'Submit Timesheet': props<{ id: number }>(),
 
     'Submit Timesheet Success': props<{ id: number }>(),
-    'Submit Timesheet Failure': props<{ error: string }>()
+    'Submit Timesheet Failure': props<{ error: string }>(),
+
+    'Load Manager Timesheets': emptyProps(),
+    'Load Manager Timesheets Success': props<{
+      timesheets: ManagerTimesheet[];
+    }>(),
+    'Load Manager Timesheets Failure': props<{ error: string }>(),
+
+    'Approve Timesheet': props<{ id: number }>(),
+    'Approve Timesheet Success': props<{ id: number }>(),
+    'Approve Timesheet Failure': props<{ error: string }>(),
+
+    'Reject Timesheet': props<{ id: number; comments: string }>(),
+    'Reject Timesheet Success': props<{ id: number; comments: string }>(),
+    'Reject Timesheet Failure': props<{ error: string }>(),
   },
 });

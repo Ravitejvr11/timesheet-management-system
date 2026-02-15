@@ -48,7 +48,9 @@ export class TimesheetEffects {
             weekEndDate,
           })
           .pipe(
-            map((timesheet) => TimesheetActions.createTimesheetSuccess({ timesheet })),
+            map((timesheet) =>
+              TimesheetActions.createTimesheetSuccess({ timesheet }),
+            ),
             catchError((error) =>
               of(
                 TimesheetActions.createTimesheetFailure({
@@ -147,20 +149,74 @@ export class TimesheetEffects {
   );
 
   navigateAfterCreate$ = createEffect(
-  () =>
+    () =>
+      this.actions$.pipe(
+        ofType(TimesheetActions.createTimesheetSuccess),
+        map(({ timesheet }) => {
+          this.router.navigate([
+            '/dashboard',
+            'timesheets',
+            timesheet?.id,
+            'entry',
+          ]);
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  loadManagerTimesheets$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TimesheetActions.createTimesheetSuccess),
-      map(({ timesheet }) => {
-        this.router.navigate([
-          '/dashboard',
-          'timesheets',
-          timesheet?.id,
-          'entry'
-        ]);
-      })
+      ofType(TimesheetActions.loadManagerTimesheets),
+      switchMap(() =>
+        this.timesheetService.getForManager().pipe(
+          map((timesheets) =>
+            TimesheetActions.loadManagerTimesheetsSuccess({ timesheets }),
+          ),
+          catchError((error) =>
+            of(
+              TimesheetActions.loadManagerTimesheetsFailure({
+                error: error?.message ?? 'Failed to load timesheets',
+              }),
+            ),
+          ),
+        ),
+      ),
     ),
-  { dispatch: false }
-);
+  );
 
+  approveTimesheet$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.approveTimesheet),
+      switchMap(({ id }) =>
+        this.timesheetService.approveTimesheet(id).pipe(
+          map(() => TimesheetActions.approveTimesheetSuccess({ id })),
+          catchError((error) =>
+            of(
+              TimesheetActions.approveTimesheetFailure({
+                error: error?.message ?? 'Failed to approve timesheet',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 
+  rejectTimesheet$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.rejectTimesheet),
+      switchMap(({ id, comments }) =>
+        this.timesheetService.rejectTimesheet(id, comments).pipe(
+          map(() => TimesheetActions.rejectTimesheetSuccess({ id, comments })),
+          catchError((error) =>
+            of(
+              TimesheetActions.rejectTimesheetFailure({
+                error: error?.message ?? 'Failed to reject timesheet',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

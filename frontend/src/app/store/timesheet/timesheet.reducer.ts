@@ -115,5 +115,63 @@ export const timesheetFeature = createFeature({
         ts.id === id ? { ...ts, status: TimesheetStatus.Submitted } : ts,
       ),
     })),
+
+    on(TimesheetActions.loadManagerTimesheets, (state) => ({
+      ...state,
+      managerLoading: true,
+    })),
+
+    on(
+      TimesheetActions.loadManagerTimesheetsSuccess,
+      (state, { timesheets }) => ({
+        ...state,
+        managerLoading: false,
+        managerTimesheets: timesheets,
+      }),
+    ),
+
+    on(TimesheetActions.loadManagerTimesheetsFailure, (state, { error }) => ({
+      ...state,
+      managerLoading: false,
+      error,
+    })),
+
+    on(TimesheetActions.approveTimesheet, (state) => ({
+      ...state,
+      approvalLoading: true,
+    })),
+
+    on(TimesheetActions.approveTimesheetSuccess, (state, { id }) => ({
+      ...state,
+      approvalLoading: false,
+      managerTimesheets: state.managerTimesheets.map((t) =>
+        t.id === id ? { ...t, status: TimesheetStatus.Approved } : t,
+      ),
+    })),
+
+    on(TimesheetActions.approveTimesheetFailure, (state, { error }) => ({
+      ...state,
+      approvalLoading: false,
+      error,
+    })),
+
+    on(TimesheetActions.rejectTimesheet, (state) => ({
+      ...state,
+      approvalLoading: true,
+    })),
+
+    on(TimesheetActions.rejectTimesheetSuccess, (state, { id, comments }) => ({
+      ...state,
+      approvalLoading: false,
+      managerTimesheets: state.managerTimesheets.map((t) =>
+        t.id === id ? { ...t, status: TimesheetStatus.Rejected, comments } : t,
+      ),
+    })),
+
+    on(TimesheetActions.rejectTimesheetFailure, (state, { error }) => ({
+      ...state,
+      approvalLoading: false,
+      error,
+    })),
   ),
 });

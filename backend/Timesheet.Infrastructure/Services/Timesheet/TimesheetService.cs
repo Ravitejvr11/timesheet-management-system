@@ -284,4 +284,41 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
             )).ToList()
         );
     }
+
+    public async Task<List<ManagerTimesheetDto>> GetTimesheetsForManagerAsync(Guid managerId)
+    {
+        var employeeIds = await context.EmployeeManagers
+            .Where(me => me.ManagerId == managerId)
+            .Select(me => me.EmployeeId)
+            .ToListAsync();
+
+        return await context.Timesheets
+            .Where(t => employeeIds.Contains(t.EmployeeId) && (t.TotalBillableHours > 0 || t.TotalNonBillableHours > 0))
+            .Include(t => t.Employee)
+            .Include(t => t.Entries)
+            .Select(t => new ManagerTimesheetDto(
+                t.Id,
+                t.ProjectId,
+                t.Project.Name,
+                t.Project.Code,
+                t.Project.ClientName,
+                t.EmployeeId,
+                t.Employee.UserName,
+                t.WeekStartDate,
+                t.WeekEndDate,
+                t.TotalBillableHours,
+                t.TotalNonBillableHours,
+                t.Status,
+                t.Comments,
+                t.Entries.Select(e => new TimesheetEntryDto(
+                    e.Id,
+                    e.WorkDate,
+                    e.BillableHours,
+                    e.NonBillableHours,
+                    e.Description
+                )).ToList()
+            ))
+            .ToListAsync();
+    }
+
 }
