@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Timesheet.Application.Reports;
 using Timesheet.Application.Timesheets.DTO;
 using Timesheet.Application.Timesheets.Interfaces;
 using Timesheet.Application.Timesheets.Strategies;
@@ -158,6 +159,46 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<EmployeeProjectHoursSummary>> GetEmployeeProjectWiseSummary(EmployeeWiseHoursFilter filter)
+    {
+        var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
+
+        // Filter employees
+        if (filter.EmployeeIds != null && filter.EmployeeIds.Any())
+        {
+            query = query.Where(e => filter.EmployeeIds.Contains(e.Timesheet.EmployeeId));
+        }
+
+        var result = await query
+            .GroupBy(e => new
+            {
+                e.Timesheet.EmployeeId,
+                EmployeeName = e.Timesheet.Employee.UserName,
+
+                e.Timesheet.ProjectId,
+                ProjectName = e.Timesheet.Project.Name
+            })
+            .Select(g => new EmployeeProjectHoursSummary
+            {
+                EmployeeId = g.Key.EmployeeId,
+                EmployeeName = g.Key.EmployeeName,
+
+                ProjectId = g.Key.ProjectId,
+                ProjectName = g.Key.ProjectName,
+
+                BillableHours = g.Sum(x => x.BillableHours),
+                NonBillableHours = g.Sum(x => x.NonBillableHours),
+
+                TotalHours = g.Sum(x => x.BillableHours + x.NonBillableHours)
+            })
+            .OrderBy(x => x.EmployeeName)
+            .ThenByDescending(x => x.TotalHours)
+            .ToListAsync();
+
+        return result;
+    }
+
 
     private static void CalculateTotals(Domain.Entities.Timesheet timesheet)
     {
