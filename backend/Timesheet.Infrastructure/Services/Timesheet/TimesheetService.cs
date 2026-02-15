@@ -160,15 +160,9 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<EmployeeProjectHoursSummary>> GetEmployeeProjectWiseSummary(EmployeeWiseHoursFilter filter)
+    public async Task<List<EmployeeProjectHoursSummary>> GetEmployeeProjectWiseSummary(TimeReportFilter filter)
     {
-        var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
-
-        // Filter employees
-        if (filter.EmployeeIds != null && filter.EmployeeIds.Any())
-        {
-            query = query.Where(e => filter.EmployeeIds.Contains(e.Timesheet.EmployeeId));
-        }
+        var query = BuildBaseQuery(filter);
 
         var result = await query
             .GroupBy(e => new
@@ -197,6 +191,48 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
             .ToListAsync();
 
         return result;
+    }
+
+    public async Task<List<ProjectHoursSummary>> GetProjectWiseHoursSummary(TimeReportFilter filter)
+    {
+        var query = BuildBaseQuery(filter);
+
+        return await query
+            .GroupBy(e => new
+            {
+                e.Timesheet.ProjectId,
+                ProjectName = e.Timesheet.Project.Name
+            })
+            .Select(g => new ProjectHoursSummary
+            {
+                ProjectId = g.Key.ProjectId,
+                ProjectName = g.Key.ProjectName,
+
+                BillableHours = g.Sum(x => x.BillableHours),
+                NonBillableHours = g.Sum(x => x.NonBillableHours),
+
+                TotalHours = g.Sum(x => x.BillableHours + x.NonBillableHours)
+            })
+            .OrderByDescending(x => x.TotalHours)
+            .ToListAsync();
+    }
+
+
+    private IQueryable<TimesheetEntry> BuildBaseQuery(TimeReportFilter filter)
+    {
+        var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
+
+        if (filter.EmployeeIds != null && filter.EmployeeIds.Any())
+        {
+            query = query.Where(e => filter.EmployeeIds.Contains(e.Timesheet.EmployeeId));
+        }
+
+        if (filter.ProjectIds != null && filter.ProjectIds.Any())
+        {
+            query = query.Where(e => filter.ProjectIds.Contains(e.Timesheet.ProjectId));
+        }
+
+        return query;
     }
 
 
