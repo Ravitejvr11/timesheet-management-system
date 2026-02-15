@@ -1,6 +1,6 @@
 <div class="entry-container">
 
-    <div class="back-row">
+  <div class="back-row">
     <button class="btn-back" (click)="goBack()">
       ← Back to Dashboard
     </button>
@@ -11,8 +11,15 @@
     <div class="header-left">
       <div>
         <h2>Timesheet</h2>
-        <div class="week">
-          Week {{ weekDays[0].date | date:'ww yyyy' }}
+        <div class="week-row">
+          <div class="week">
+            Week {{ weekDays[0].date | date:'ww yyyy' }}
+          </div>
+          @if (status()) {
+          <div class="status-badge" [ngClass]="status()?.toLowerCase()">
+            {{ status() }}
+          </div>
+          }
         </div>
       </div>
     </div>
@@ -21,20 +28,36 @@
       <button class="btn-secondary">
         Cancel
       </button>
+      @if (actionLabel()) {
+      <button class="btn-primary" [disabled]="!hasAnyEntry() || hasDayExceeded24Hrs() || isEditable()" (click)="actionLabel() === 'Save'
+              ? saveTimesheet()
+              : submitForApproval()">
 
-      <button class="btn-primary" [disabled]="!hasAnyEntry()">
-        Save
+        {{ actionLabel() }}
       </button>
+      }
     </div>
 
   </div>
 
   <form [formGroup]="form">
 
+    @if (hasDayExceeded24Hrs()) {
+    <div class="timesheet-error glass">
+      ⚠️ A single day cannot exceed 24 hours.
+      Please adjust the billable and non-billable time.
+    </div>
+    }
+
+
     <div class="timesheet-grid glass">
 
       <!-- Empty top-left cell -->
       <div class="grid header empty"></div>
+
+      @if (loading()) {
+      <app-spinner [overlay]="true"></app-spinner>
+      }
 
       <!-- Week Headers -->
       @for (day of weekDays; let i = $index; track i) {
@@ -58,7 +81,7 @@
           [formGroupName]="i">
 
           <input type="text" inputmode="numeric" formControlName="billableTime"
-            (keydown)="onKeyDown($event, group.controls.billableTime)" />
+            (input)="onTimeInput($event, group.controls.billableTime)" [disabled]="!isEditable()"/>
         </div>
         }
       </ng-container>
@@ -76,7 +99,7 @@
           [formGroupName]="i">
 
           <input type="text" inputmode="numeric" formControlName="nonBillableTime"
-            (keydown)="onKeyDown($event, group.controls.nonBillableTime)" />
+            (input)="onTimeInput($event, group.controls.nonBillableTime)" [disabled]="!isEditable()"/>
         </div>
         }
       </ng-container>

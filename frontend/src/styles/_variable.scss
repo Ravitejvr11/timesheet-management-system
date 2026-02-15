@@ -76,4 +76,19 @@
   /* FOCUS RING */
   --ts-focus-ring: var(--ts-border-soft);
 
+  --ts-status-draft-bg: var(--ts-hover-soft);
+  --ts-status-draft-text: var(--text-light);
+
+  --ts-status-submitted-bg: rgba(59, 130, 246, 0.15);
+  --ts-status-submitted-text: #d3dbe7;
+
+  --ts-status-approved-bg: rgba(34, 197, 94, 0.15);
+  --ts-status-approved-text: #22c55e;
+
+  --ts-status-rejected-bg: rgba(239, 68, 68, 0.15);
+  --ts-status-rejected-text: #ef4444;
+
+  --ts-status-pending-bg: rgba(245, 158, 11, 0.15);
+  --ts-status-pending-text: #f59e0b;
+
 }

@@ -154,3 +154,61 @@
 .btn-secondary:hover {
   background: var(--ts-hover-soft);
 }
+
+.timesheet-error {
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--ts-error-border);
+  background: var(--ts-error-bg);
+  color: var(--ts-text-primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-left {
+  color: var(--text-light);
+}
+
+.week-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
+/* Status Variants */
+.status-badge.draft {
+  background: var(--ts-status-draft-bg);
+  color: var(--ts-status-draft-text);
+}
+
+.status-badge.submitted {
+  background: var(--ts-status-submitted-bg);
+  color: var(--ts-status-submitted-text);
+}
+
+.status-badge.approved {
+  background: var(--ts-status-approved-bg);
+  color: var(--ts-status-approved-text);
+}
+
+.status-badge.rejected {
+  background: var(--ts-status-rejected-bg);
+  color: var(--ts-status-rejected-text);
+}
+
+.status-badge.pending {
+  background: var(--ts-status-pending-bg);
+  color: var(--ts-status-pending-text);
+}

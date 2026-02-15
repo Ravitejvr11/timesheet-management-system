@@ -1,6 +1,7 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { initialTimesheetState } from './timesheet.state';
 import { TimesheetActions } from './timesheet.action';
+import { TimesheetStatus } from '@core/models/timesheet/timesheet-status.util';
 
 export const timesheetFeature = createFeature({
   name: 'timesheet',
@@ -22,8 +23,7 @@ export const timesheetFeature = createFeature({
       ...state,
       projects,
       selectedProjectId:
-        state.selectedProjectId ??
-        (projects.length ? projects[0].id : null),
+        state.selectedProjectId ?? (projects.length ? projects[0].id : null),
       loading: false,
     })),
 
@@ -43,23 +43,17 @@ export const timesheetFeature = createFeature({
       error: null,
     })),
 
-    on(
-      TimesheetActions.loadTimesheetsSuccess,
-      (state, { timesheets }) => ({
-        ...state,
-        timesheets,
-        loading: false,
-      }),
-    ),
+    on(TimesheetActions.loadTimesheetsSuccess, (state, { timesheets }) => ({
+      ...state,
+      timesheets,
+      loading: false,
+    })),
 
-    on(
-      TimesheetActions.loadTimesheetsFailure,
-      (state, { error }) => ({
-        ...state,
-        loading: false,
-        error,
-      }),
-    ),
+    on(TimesheetActions.loadTimesheetsFailure, (state, { error }) => ({
+      ...state,
+      loading: false,
+      error,
+    })),
 
     /* =============================
        SELECT PROJECT
@@ -89,6 +83,37 @@ export const timesheetFeature = createFeature({
       ...state,
       loading: false,
       error,
+    })),
+
+    /* =============================
+        UPDATE TIMESHEET
+      ============================== */
+
+    on(TimesheetActions.updateTimesheet, (state) => ({
+      ...state,
+      loading: true,
+      error: null,
+    })),
+
+    on(TimesheetActions.updateTimesheetSuccess, (state, { timesheet }) => ({
+      ...state,
+      loading: false,
+      timesheets: state.timesheets.map((ts) =>
+        ts.id === timesheet.id ? timesheet : ts,
+      ),
+    })),
+
+    on(TimesheetActions.updateTimesheetFailure, (state, { error }) => ({
+      ...state,
+      loading: false,
+      error,
+    })),
+
+    on(TimesheetActions.submitTimesheetSuccess, (state, { id }) => ({
+      ...state,
+      timesheets: state.timesheets.map((ts) =>
+        ts.id === id ? { ...ts, status: TimesheetStatus.Submitted } : ts,
+      ),
     })),
   ),
 });

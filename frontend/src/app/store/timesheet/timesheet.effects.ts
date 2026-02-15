@@ -6,6 +6,7 @@ import { TimesheetActions } from './timesheet.action';
 import { TimesheetService } from '@core/services/timesheet.service';
 import { timesheetFeature } from './timesheet.reducer';
 import { Store } from '@ngrx/store';
+import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
 
 @Injectable()
 export class TimesheetEffects {
@@ -98,6 +99,48 @@ export class TimesheetEffects {
           ),
         );
       }),
+    ),
+  );
+
+  updateTimesheet$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.updateTimesheet),
+      switchMap(({ id, weekStartDate, weekEndDate, entries }) =>
+        this.timesheetService
+          .updateTimesheet(id, {
+            weekStartDate,
+            weekEndDate,
+            entries,
+          })
+          .pipe(
+            map((response) =>
+              TimesheetActions.updateTimesheetSuccess({
+                timesheet: response as TimesheetDetailModel,
+              }),
+            ),
+            catchError((error) =>
+              of(
+                TimesheetActions.updateTimesheetFailure({
+                  error: error?.error?.message ?? 'Failed to update timesheet',
+                }),
+              ),
+            ),
+          ),
+      ),
+    ),
+  );
+
+  submitTimesheet$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.submitTimesheet),
+      switchMap(({ id }) =>
+        this.timesheetService.submitTimesheet(id).pipe(
+          map(() => TimesheetActions.submitTimesheetSuccess({ id })),
+          catchError((error) =>
+            of(TimesheetActions.submitTimesheetFailure({ error })),
+          ),
+        ),
+      ),
     ),
   );
 }

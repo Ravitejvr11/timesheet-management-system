@@ -1,8 +1,8 @@
 export enum TimesheetStatus {
-  Draft = 0,
-  Submitted = 1,
-  Approved = 2,
-  Rejected = 3,
+    Draft = 1,
+    Submitted = 2,
+    Approved = 3,
+    Rejected = 4
 }
 
 export function getTimesheetStatusLabel(status: number): string {
@@ -20,6 +20,21 @@ export function getTimesheetStatusLabel(status: number): string {
   }
 }
 
+export function getTimesheetStatusValue(status: string): number {
+  switch (status) {
+    case 'Draft':
+      return TimesheetStatus.Draft;
+    case 'Submitted':
+      return TimesheetStatus.Submitted;
+    case 'Approved':
+      return TimesheetStatus.Approved;
+    case 'Rejected':
+      return TimesheetStatus.Rejected;
+    default:
+      return 0; // or throw new Error('Invalid status');
+  }
+}
+
 export function getTimesheetStatusClass(status: number): string {
   switch (status) {
     case TimesheetStatus.Submitted:
@@ -33,14 +48,14 @@ export function getTimesheetStatusClass(status: number): string {
   }
 }
 
-  export function toMinutes(value: string | null | undefined): number {
-    if (!value || !/^\d{2}:\d{2}$/.test(value)) {
-      return 0;
-    }
-
-    const [h, m] = value.split(':').map(Number);
-
-    if (isNaN(h) || isNaN(m)) return 0;
-
-    return h * 60 + m;
+export function toMinutes(value: string | null | undefined): number {
+  if (!value || !/^\d{2}:\d{2}$/.test(value)) {
+    return 0;
   }
+
+  const [h, m] = value.split(':').map(Number);
+
+  if (isNaN(h) || isNaN(m)) return 0;
+
+  return h * 60 + m;
+}

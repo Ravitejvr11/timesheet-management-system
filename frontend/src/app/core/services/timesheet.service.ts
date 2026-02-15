@@ -4,6 +4,7 @@ import { environment } from '@environments/environment';
 import type { Observable } from 'rxjs';
 import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
+import type { UpdateTimesheetRequest } from 'src/app/store/timesheet/timesheet.state';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,22 @@ export class TimesheetService {
   }
 
   getTimesheets(projectId: number): Observable<TimesheetViewModel[]> {
-    return this.http.get<TimesheetViewModel[]>(`${this.baseUrl}/my?projectId=${projectId}`);
+    return this.http.get<TimesheetViewModel[]>(
+      `${this.baseUrl}/my?projectId=${projectId}`,
+    );
+  }
+
+  updateTimesheet(
+    id: number,
+    payload: UpdateTimesheetRequest,
+  ): Observable<UpdateTimesheetRequest> {
+    return this.http.put<UpdateTimesheetRequest>(
+      `${this.baseUrl}/${id}`,
+      payload,
+    );
+  }
+
+  submitTimesheet(id: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/submit`, {});
   }
 }

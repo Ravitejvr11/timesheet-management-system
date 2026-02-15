@@ -1,6 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import type { Project } from '@core/models/project/project.model';
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
+import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
 
 export const TimesheetActions = createActionGroup({
   source: 'Timesheet',
@@ -25,5 +26,28 @@ export const TimesheetActions = createActionGroup({
     'Create Timesheet Success': emptyProps(),
 
     'Create Timesheet Failure': props<{ error: string }>(),
+
+    'Update Timesheet': props<{
+      id: number;
+      weekStartDate: string;
+      weekEndDate: string;
+      entries: {
+        workDate: string;
+        billableHours: number;
+        nonBillableHours: number;
+        description?: string | null;
+      }[];
+    }>(),
+
+    'Update Timesheet Success': props<{
+      timesheet: TimesheetDetailModel;
+    }>(),
+
+    'Update Timesheet Failure': props<{ error: string }>(),
+
+    'Submit Timesheet': props<{ id: number }>(),
+
+    'Submit Timesheet Success': props<{ id: number }>(),
+    'Submit Timesheet Failure': props<{ error: string }>()
   },
 });
