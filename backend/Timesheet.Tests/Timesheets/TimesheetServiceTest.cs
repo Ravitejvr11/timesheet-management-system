@@ -383,5 +383,73 @@ public class TimesheetServiceTests
         Assert.That(ex!.Message, Is.EqualTo("Invalid timesheet state transition."));
     }
 
+    [Test]
+    public async Task ApproveTimesheetAsync_ShouldApproveSubmittedTimesheet()
+    {
+        // Arrange
+        var managerId = Guid.NewGuid();
+
+        // Mark ts2 as Submitted
+        var timesheet = await _context.Timesheets.FirstAsync(t => t.Id == 2);
+        timesheet.Status = TimesheetStatus.Submitted;
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _service.ApproveTimesheetAsync(managerId, 2);
+
+        // Assert
+        var updatedTimesheet = await _context.Timesheets.FirstAsync(t => t.Id == 2);
+        Assert.That(updatedTimesheet.Status, Is.EqualTo(TimesheetStatus.Approved));
+        Assert.That(updatedTimesheet.ApprovedBy, Is.EqualTo(managerId));
+        Assert.That(updatedTimesheet.ApprovedAt, Is.Not.Null);
+    }
+
+    [Test]
+    public void ApproveTimesheetAsync_ShouldThrow_WhenTimesheetNotFound()
+    {
+        // Arrange
+        var managerId = Guid.NewGuid();
+        var nonExistentTimesheetId = 999;
+
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<Exception>(() => _service.ApproveTimesheetAsync(managerId, nonExistentTimesheetId));
+        Assert.That(ex!.Message, Is.EqualTo("Timesheet not found."));
+    }
+
+    [Test]
+    public async Task RejectTimesheetAsync_ShouldRejectSubmittedTimesheet()
+    {
+        // Arrange
+        var managerId = Guid.NewGuid();
+        var comments = "Incorrect hours";
+
+        // Mark ts2 as Submitted
+        var timesheet = await _context.Timesheets.FirstAsync(t => t.Id == 2);
+        timesheet.Status = TimesheetStatus.Submitted;
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _service.RejectTimesheetAsync(managerId, 2, comments);
+
+        // Assert
+        var updatedTimesheet = await _context.Timesheets.FirstAsync(t => t.Id == 2);
+        Assert.That(updatedTimesheet.Status, Is.EqualTo(TimesheetStatus.Rejected));
+        Assert.That(updatedTimesheet.Comments, Is.EqualTo(comments));
+        Assert.That(updatedTimesheet.ApprovedBy, Is.EqualTo(managerId));
+        Assert.That(updatedTimesheet.ApprovedAt, Is.Not.Null);
+    }
+
+    [Test]
+    public void RejectTimesheetAsync_ShouldThrow_WhenTimesheetNotSubmitted()
+    {
+        // Arrange
+        var managerId = Guid.NewGuid();
+        var comments = "Invalid";
+        var timesheet = _context.Timesheets.First(t => t.Id == 1); // ts1 is Draft by default
+
+        // Act & Assert
+        var ex = Assert.ThrowsAsync<Exception>(() => _service.RejectTimesheetAsync(managerId, timesheet.Id, comments));
+        Assert.That(ex!.Message, Is.EqualTo("Only submitted timesheets can be rejected."));
+    }
 }
 
