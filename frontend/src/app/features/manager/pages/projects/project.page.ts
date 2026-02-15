@@ -273,4 +273,12 @@ export class ProjectPage {
       this.store.dispatch(ProjectActions.createProject({ request }));
     }
   }
+
+  onActivate(id: number): void {
+    this.store.dispatch(ProjectActions.activateProject({ id }));
+  }
+
+  onDeactivate(id: number): void {
+    this.store.dispatch(ProjectActions.deactivateProject({ id }));
+  }
 }

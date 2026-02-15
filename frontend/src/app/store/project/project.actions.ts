@@ -17,7 +17,12 @@ export const ProjectActions = createActionGroup({
     'Update Project Success': props<{ project: Project }>(),
     'Update Project Failure': props<{ error: string }>(),
     'Activate Project': props<{ id: number }>(),
+    'Activate Project Success': props<{ id: number }>(),
+    'Activate Project Failure': props<{ error: string }>(),
     'Deactivate Project': props<{ id: number }>(),
+    'Deactivate Project Success': props<{ id: number }>(),
+    'Deactivate Project Failure': props<{ error: string }>(),
+
 
     'Load Employees': emptyProps(),
     'Load Employees Success': props<{ employees: Employee[] }>(),
