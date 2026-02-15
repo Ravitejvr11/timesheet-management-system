@@ -5,6 +5,7 @@ import type { Observable } from 'rxjs';
 import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
 import type { UpdateTimesheetRequest } from 'src/app/store/timesheet/timesheet.state';
+import type { ManagerTimesheet } from '@core/models/timesheet/manager-timesheet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +40,25 @@ export class TimesheetService {
 
   submitTimesheet(id: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/submit`, {});
+  }
+
+  getForManager(): Observable<ManagerTimesheet[]> {
+    return this.http.get<ManagerTimesheet[]>(this.baseUrl);
+  }
+
+  approveTimesheet(id: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/approve`, {});
+  }
+
+  rejectTimesheet(id: number, comments: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/${id}/reject`,
+      JSON.stringify(comments),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
   }
 }

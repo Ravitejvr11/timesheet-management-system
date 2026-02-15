@@ -1,0 +1,242 @@
+<div class="manager-timesheets-page">
+
+  <!-- Header -->
+  <div class="manager-header-card">
+    <div>
+      <h2 class="manager-title">Timesheet Approvals</h2>
+      <p class="manager-subtitle">
+        Review and approve employee submitted timesheets
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="manager-loading-card">
+    Loading timesheets...
+  </div>
+  }
+
+  <!-- Table -->
+  @if (!loading()) {
+  <div class="manager-content-card">
+
+    <table class="approval-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Project Code</th>
+          <th>Project Name</th>
+          <th>Client</th>
+          <th>Week</th>
+          <th>Billable</th>
+          <th>Non-Billable</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @if (timesheets().length === 0) {
+        <tr>
+          <td colspan="9" class="empty">
+            No timesheets found
+          </td>
+        </tr>
+        }
+
+        @for (t of timesheets(); track t.id) {
+        <tr class="clickable-row" (click)="openViewDialog(t)">
+
+          <td>{{ t.employeeName }}</td>
+          <td>{{ t.projectCode }}</td>
+          <td>{{ t.projectName }}</td>
+          <td>{{ t.clientName }}</td>
+
+          <td>
+            {{ t.weekStartDate }} -
+            {{ t.weekEndDate }}
+          </td>
+
+          <td>{{ t.totalBillableHours }}</td>
+          <td>{{ t.totalNonBillableHours }}</td>
+
+          <td>
+            <span class="status-badge" [ngClass]="
+                    {
+                      'approved': t.status === 3,
+                      'rejected': t.status === 4,
+                      'submitted': t.status === 2,
+                      'draft': t.status === 1
+                    }
+                  ">
+              {{ getStatusLabel(t.status) }}
+            </span>
+          </td>
+
+          <td>
+
+            @if (t.status === 2) { <!-- Submitted -->
+            <div class="action-buttons">
+
+              <button class="approve-btn" [disabled]="approvalLoading()"
+                (click)="openApproveDialog(t); $event.stopPropagation()">
+                Approve
+              </button>
+
+              <button class="reject-btn" [disabled]="approvalLoading()"
+                (click)="openRejectDialog(t.id); $event.stopPropagation()">
+                Reject
+              </button>
+
+            </div>
+            }
+
+            @if (t.status !== 2) {
+            <span class="no-action">—</span>
+            }
+
+          </td>
+
+        </tr>
+        }
+
+      </tbody>
+    </table>
+
+  </div>
+  }
+
+  <!-- Reject Dialog -->
+  @if (rejectDialogOpen()) {
+  <app-dialog [open]="rejectDialogOpen()" (_close)="closeRejectDialog()">
+
+    <div class="reject-dialog">
+
+      <h3>Reject Timesheet</h3>
+
+      <textarea placeholder="Enter rejection comments..." [value]="rejectComments()"
+        (input)="rejectComments.set($any($event.target).value)"></textarea>
+
+      @if (!rejectComments().trim()) {
+      <div class="error-text">
+        Comments are required
+      </div>
+      }
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closeRejectDialog()">
+          Cancel
+        </button>
+
+        <button class="primary-btn" [disabled]="!rejectComments().trim()" (click)="reject()">
+          Confirm Reject
+        </button>
+      </div>
+
+    </div>
+
+  </app-dialog>
+  }
+
+  <app-dialog [open]="approveDialogOpen()" (_close)="closeApproveDialog()">
+    <div class="approve-dialog">
+
+      <h3>Approve Timesheet</h3>
+
+      @if (selectedTimesheetForApproval()) {
+      <p class="approve-text">
+        Are you sure you want to approve
+      </p>
+
+      <div class="approve-highlight">
+        {{ selectedTimesheetForApproval()?.employeeName }} –
+        {{ selectedTimesheetForApproval()?.projectCode }} –
+        {{ selectedTimesheetForApproval()?.projectName }} –
+        {{ selectedTimesheetForApproval()?.clientName }}
+      </div>
+      }
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closeApproveDialog()">
+          Cancel
+        </button>
+
+        <button class="primary-btn" (click)="confirmApprove()">
+          Confirm Approve
+        </button>
+      </div>
+
+    </div>
+  </app-dialog>
+  <app-dialog
+  [open]="viewDialogOpen()"
+  (_close)="closeViewDialog()"
+>
+  <div class="view-dialog">
+
+    <h3>Timesheet Details</h3>
+
+    @if (selectedTimesheetForView()) {
+
+      <div class="view-summary">
+        <div>
+          <strong>Employee:</strong>
+          {{ selectedTimesheetForView()?.employeeName }}
+        </div>
+        <div>
+          <strong>Project:</strong>
+          {{ selectedTimesheetForView()?.projectCode }} –
+          {{ selectedTimesheetForView()?.projectName }}
+        </div>
+        <div>
+          <strong>Client:</strong>
+          {{ selectedTimesheetForView()?.clientName }}
+        </div>
+        <div>
+          <strong>Week:</strong>
+          {{ selectedTimesheetForView()?.weekStartDate }} –
+          {{ selectedTimesheetForView()?.weekEndDate }}
+        </div>
+      </div>
+
+      <div class="entries-table-wrapper">
+
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Billable</th>
+              <th>Non-Billable</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (e of selectedTimesheetForView()?.entries ?? []; track e.id) {
+              <tr>
+                <td>{{ e.workDate }}</td>
+                <td>{{ e.billableHours }}</td>
+                <td>{{ e.nonBillableHours }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+      </div>
+
+    }
+
+    <div class="dialog-actions">
+      <button
+        class="secondary-btn"
+        (click)="closeViewDialog()"
+      >
+        Close
+      </button>
+    </div>
+
+  </div>
+</app-dialog>
+
+</div>

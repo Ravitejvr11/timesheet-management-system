@@ -36,6 +36,9 @@
         {{ actionLabel() }}
       </button>
       }
+      <button class="btn-primary" [disabled]="!hasAnyEntry() || hasDayExceeded24Hrs() || isEditable()" (click)="submitForApproval()">
+        Submit for approval
+      </button>
     </div>
 
   </div>

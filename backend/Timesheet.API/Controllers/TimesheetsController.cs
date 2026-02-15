@@ -97,4 +97,16 @@ public class TimesheetsController(ITimesheetService timesheetService)
 
         return Guid.Parse(claim);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Manager")]
+    public async Task<IActionResult> GetForManager()
+    {
+        var managerId = GetUserId();
+
+        var result = await timesheetService
+            .GetTimesheetsForManagerAsync(managerId);
+
+        return Ok(result);
+    }
 }

@@ -22,6 +22,21 @@ export const MANAGER_ROUTES: Routes = [
             (m) => m.ProjectPage,
           ),
       },
+      {
+        path: 'timesheets',
+        loadComponent: () =>
+          import('./pages/timesheets/manager-timesheets/manager-timesheets').then(
+            (m) => m.ManagerTimesheets,
+          ),
+      },
+      // {
+      //   path: 'reports',
+      //   loadComponent: () =>
+      //     import('./pages/reports/manager-reports').then(
+      //       (m) => m.ManagerReports,
+      //     ),
+      // },
     ],
   },
 ];
+
