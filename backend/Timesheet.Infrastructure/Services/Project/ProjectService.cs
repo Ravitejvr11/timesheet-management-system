@@ -113,18 +113,6 @@ public class ProjectService(AppDbContext context, IMapper mapper) : IProjectServ
         await context.SaveChangesAsync();
     }
 
-    public async Task Delete(int projectId)
-    {
-        var project = await context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
-
-        if (project == null)
-            throw new Exception("Project not found");
-
-        project.Status = ProjectStatus.Deleted;
-
-        await context.SaveChangesAsync();
-    }
-
     public async Task<List<ProjectDto>> GetAllProjectsAsync()
     {
         return await context.Projects

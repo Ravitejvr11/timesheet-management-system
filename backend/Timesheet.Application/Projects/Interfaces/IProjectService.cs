@@ -14,9 +14,9 @@ public interface IProjectService
 
     Task Activate(int projectId);
 
-    Task Delete(int projectId);
     Task<List<ProjectDto>> GetAllProjectsAsync();
-    Task<List<ManagerEmployeeDto>> GetEmployeesForManagerAsync(Guid managerId);
-    Task<List<ManagerEmployeeDto>> GetEmployeesByProjectAsync(int projectId);
 
+    Task<List<ManagerEmployeeDto>> GetEmployeesForManagerAsync(Guid managerId);
+
+    Task<List<ManagerEmployeeDto>> GetEmployeesByProjectAsync(int projectId);
 }

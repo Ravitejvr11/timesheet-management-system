@@ -65,14 +65,6 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Manager")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        await projectService.Delete(id);
-        return NoContent();
-    }
-
     [HttpGet("employees")]
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> GetEmployeesForManager()

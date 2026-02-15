@@ -13,9 +13,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 {
     private readonly IEnumerable<ITimesheetStatusStrategy> _strategies = strategies;
 
-    public async Task<List<TimesheetDto>> GetTimesheetsForEmployeeAsync(
-        Guid employeeId,
-        int projectId)
+    public async Task<List<TimesheetDto>> GetTimesheetsForEmployeeAsync(Guid employeeId, int projectId)
     {
         return await context.Timesheets
             .Where(t => t.EmployeeId == employeeId && t.ProjectId == projectId)
@@ -25,9 +23,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
             .ToListAsync();
     }
 
-    public async Task<TimesheetDto> CreateTimesheetAsync(
-        Guid employeeId,
-        CreateTimesheetRequest request)
+    public async Task<TimesheetDto> CreateTimesheetAsync(Guid employeeId, CreateTimesheetRequest request)
     {
         var timesheet = new Domain.Entities.Timesheet
         {
@@ -46,10 +42,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         return MapToDto(timesheet);
     }
 
-    public async Task<TimesheetDto> UpdateTimesheetAsync(
-        Guid employeeId,
-        int timesheetId,
-        UpdateTimesheetRequest request)
+    public async Task<TimesheetDto> UpdateTimesheetAsync(Guid employeeId, int timesheetId, UpdateTimesheetRequest request)
     {
         var timesheet = await context.Timesheets
             .Include(t => t.Entries)
@@ -64,7 +57,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
             timesheet.Status != TimesheetStatus.Rejected)
             throw new Exception("Timesheet cannot be edited.");
 
-        // If editing rejected → reset to Draft
+        // If editing rejected - reset to Draft
         if (timesheet.Status == TimesheetStatus.Rejected)
         {
             timesheet.Status = TimesheetStatus.Draft;
@@ -94,9 +87,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         return MapToDto(timesheet);
     }
 
-    public async Task SubmitTimesheetAsync(
-        Guid employeeId,
-        int timesheetId)
+    public async Task SubmitTimesheetAsync(Guid employeeId, int timesheetId)
     {
         var timesheet = await context.Timesheets
             .FirstOrDefaultAsync(t =>
@@ -117,10 +108,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         await context.SaveChangesAsync();
     }
 
-
-    public async Task ApproveTimesheetAsync(
-        Guid managerId,
-        int timesheetId)
+    public async Task ApproveTimesheetAsync(Guid managerId, int timesheetId)
     {
         var timesheet = await context.Timesheets
             .FirstOrDefaultAsync(t => t.Id == timesheetId);
@@ -138,10 +126,7 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         await context.SaveChangesAsync();
     }
 
-    public async Task RejectTimesheetAsync(
-        Guid managerId,
-        int timesheetId,
-        string comments)
+    public async Task RejectTimesheetAsync(Guid managerId, int timesheetId, string comments)
     {
         var timesheet = await context.Timesheets
             .FirstOrDefaultAsync(t => t.Id == timesheetId);
@@ -236,7 +221,6 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
         };
     }
 
-
     private IQueryable<TimesheetEntry> BuildBaseQuery(TimeReportFilter filter)
     {
         var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
@@ -248,12 +232,11 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 
         if (filter.ProjectIds != null && filter.ProjectIds.Any())
         {
-            query = query.Where(e => filter.ProjectIds.Contains(e.Timesheet.ProjectId));
+            query = query.Where(e => filter.ProjectIds.Contains(e.Timesheet.ProjectId) && e.Timesheet.Project.Status == ProjectStatus.Active);
         }
 
         return query;
     }
-
 
     private static void CalculateTotals(Domain.Entities.Timesheet timesheet)
     {
@@ -266,23 +249,26 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 
     private static TimesheetDto MapToDto(Domain.Entities.Timesheet t)
     {
-        return new TimesheetDto(
-            t.Id,
-            t.ProjectId,
-            t.WeekStartDate,
-            t.WeekEndDate,
-            t.TotalBillableHours,
-            t.TotalNonBillableHours,
-            t.Status,
-            t.Comments,
-            t.Entries.Select(e => new TimesheetEntryDto(
-                e.Id,
-                e.WorkDate,
-                e.BillableHours,
-                e.NonBillableHours,
-                e.Description
-            )).ToList()
-        );
+        return new TimesheetDto()
+        {
+            Id = t.Id,
+            ProjectId = t.ProjectId,
+            EmployeeId = t.EmployeeId,
+            WeekStartDate = t.WeekStartDate,
+            WeekEndDate = t.WeekEndDate,
+            TotalBillableHours = t.TotalBillableHours,
+            TotalNonBillableHours = t.TotalNonBillableHours,
+            Status = t.Status,
+            Comments = t.Comments,
+            Entries = t.Entries.Select(e => new TimesheetEntryDto()
+            {
+                Id = e.Id,
+                WorkDate = e.WorkDate,
+                BillableHours = e.BillableHours,
+                NonBillableHours = e.NonBillableHours,
+                Description = e.Description
+            }).ToList()
+        };
     }
 
     public async Task<List<ManagerTimesheetDto>> GetTimesheetsForManagerAsync(Guid managerId)
