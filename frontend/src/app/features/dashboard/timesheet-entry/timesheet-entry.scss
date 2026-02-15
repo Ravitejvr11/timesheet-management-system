@@ -1,0 +1,156 @@
+.entry-container {
+  padding: 48px 40px 32px;
+}
+
+.glass {
+  backdrop-filter: blur(14px);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-border);
+  border-radius: 16px;
+}
+
+.timesheet-grid {
+  display: grid;
+  grid-template-columns: 220px repeat(7, 1fr) 120px;
+  overflow: hidden;
+}
+
+.grid {
+  padding: 14px;
+  border-right: 1px solid var(--ts-border-soft);
+  border-bottom: 1px solid var(--ts-border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+}
+
+.header {
+  font-weight: 600;
+  flex-direction: column;
+}
+
+.row-label {
+  justify-content: flex-start;
+  font-weight: 500;
+}
+
+.date {
+  font-size: 12px;
+  opacity: 0.7;
+  color: var(--text-light);
+}
+
+.cell input {
+  width: 100px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--ts-input-border);
+  background: var(--ts-input-bg);
+  backdrop-filter: blur(6px);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--ts-text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.cell input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ts-focus-ring);
+}
+
+.weekend {
+  background: var(--ts-weekend-bg);
+  color: var(--text-light);
+}
+
+.invalid {
+  background: var(--ts-error-bg);
+  border: 1px solid var(--ts-error-border);
+}
+
+.total-col {
+  font-weight: 600;
+}
+
+.grand-total {
+  font-weight: 700;
+}
+
+.muted {
+  opacity: 0.6;
+  color: var(--text-light);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.back-row {
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  background: transparent;
+  border: none;
+  color: var(--ts-text-soft);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.2s ease;
+}
+
+.btn-back:hover {
+  opacity: 0.7;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--ts-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-primary:disabled {
+  opacity: var(--ts-btn-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--ts-border);
+  padding: 8px 18px;
+  border-radius: 10px;
+  color: var(--ts-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--ts-hover-soft);
+}

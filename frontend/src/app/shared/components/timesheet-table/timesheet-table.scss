@@ -183,3 +183,15 @@ tbody tr:hover {
   padding: 30px;
   color: var(--text-muted);
 }
+
+.project-link {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+  }
+}

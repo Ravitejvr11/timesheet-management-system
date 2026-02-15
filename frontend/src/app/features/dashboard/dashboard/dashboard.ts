@@ -1,28 +1,58 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, ElementRef, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+} from '@angular/core';
 import type { OnInit } from '@angular/core';
 import type { Project } from '@core/models/project/project.model';
 import type { TimesheetRow } from '@core/models/timesheet/timesheet-row.model';
-import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
-import { ProjectService } from '@core/services/project.service';
 import { AuthStore } from '@core/state/auth.store';
 import { buildTimesheetDataSource } from 'src/app/shared/builders/timesheet-datasource.builder';
 import { TimesheetStats } from 'src/app/shared/components/timesheet-stats/timesheet-stats';
 import { TimesheetTable } from 'src/app/shared/components/timesheet-table/timesheet-table';
+import { Store } from '@ngrx/store';
+import { timesheetFeature } from 'src/app/store/timesheet/timesheet.reducer';
+import { TimesheetActions } from 'src/app/store/timesheet/timesheet.action';
+import { Dialog } from 'src/app/shared/components/dialog/dialog';
+import { AddTimesheetForm } from 'src/app/shared/components/add-timesheet-form/add-timesheet-form';
+import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
+import { Actions, ofType } from '@ngrx/effects';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, TimesheetTable, TimesheetStats],
+  imports: [
+    CommonModule,
+    TimesheetTable,
+    TimesheetStats,
+    Dialog,
+    AddTimesheetForm,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  private projectService = inject(ProjectService);
+  private store = inject(Store);
   private authStore = inject(AuthStore);
   private elementRef = inject(ElementRef);
+  private actions$ = inject(Actions);
+  loading = this.store.selectSignal(
+    timesheetFeature.selectLoading,
+  );
 
-  projects = signal<Project[]>([]);
-  selectedProjectId = signal<number | null>(null);
+
+  isAddDialogOpen = signal(false);
+
+  projects = this.store.selectSignal(timesheetFeature.selectProjects);
+  timesheets = this.store.selectSignal(timesheetFeature.selectTimesheets);
+
+  selectedProjectId = this.store.selectSignal(
+    timesheetFeature.selectSelectedProjectId,
+  );
   isDropdownOpen = signal(false);
 
   user = computed(() => this.authStore.user());
@@ -32,20 +62,7 @@ export class Dashboard implements OnInit {
     return this.projects().find((p) => p.id === id)?.name;
   });
 
-  timesheets = signal<TimesheetViewModel[]>([
-    {
-      id: 1,
-      projectId: 1,
-      weekStartDate: '2024-02-02',
-      weekEndDate: '2024-02-08',
-      totalBillableHours: 40,
-      totalNonBillableHours: 2,
-      status: 1,
-      submittedAt: '2024-02-09',
-      approvedAt: null,
-    },
-  ]);
-
+  // For data table
   dataSource = computed<TimesheetRow[]>(() => {
     const timesheets = this.timesheets();
     const projects = this.projects();
@@ -72,27 +89,38 @@ export class Dashboard implements OnInit {
 
       return (): void => document.removeEventListener('click', handleClick);
     });
+
+    this.actions$
+      .pipe(
+        ofType(TimesheetActions.createTimesheetSuccess),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => {
+        this.closeAddDialog();
+
+        const selectedProjectId = this.selectedProjectId();
+        if (selectedProjectId) {
+          this.store.dispatch(
+            TimesheetActions.loadTimesheets({
+              projectId: selectedProjectId,
+            }),
+          );
+        }
+      });
   }
 
   ngOnInit(): void {
-    this.loadProjects();
-  }
-
-  private loadProjects(): void {
-    this.projectService.getMyProjects().subscribe({
-      next: (data) => {
-
-        this.projects.set(data);
-        if (data.length > 0) {
-          this.selectedProjectId.set(data[0].id);
-        }
-      },
-    });
+    this.store.dispatch(TimesheetActions.loadProjects());
   }
 
   onProjectChange(event: Event): void {
     const value = Number((event.target as HTMLSelectElement).value);
-    this.selectedProjectId.set(value);
+
+    this.store.dispatch(
+      TimesheetActions.selectProject({
+        projectId: value,
+      }),
+    );
   }
 
   getTotalBillableHours(): number {
@@ -111,7 +139,29 @@ export class Dashboard implements OnInit {
   }
 
   selectProject(project: Project): void {
-    this.selectedProjectId.set(project.id);
+    this.store.dispatch(
+      TimesheetActions.selectProject({
+        projectId: project.id,
+      }),
+    );
     this.isDropdownOpen.set(false);
+  }
+
+  openAddDialog(): void {
+    this.isAddDialogOpen.set(true);
+  }
+
+  closeAddDialog(): void {
+    this.isAddDialogOpen.set(false);
+  }
+
+  handleAddTimesheet(payload: AddTimesheetPayload): void {
+    this.store.dispatch(
+      TimesheetActions.createTimesheet({
+        projectId: payload.projectId,
+        weekStartDate: payload.weekFrom,
+        weekEndDate: payload.weekTo,
+      }),
+    );
   }
 }

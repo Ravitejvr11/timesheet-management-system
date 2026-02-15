@@ -154,3 +154,26 @@
   transform: rotate(180deg);
 }
 
+.dashboard-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.add-timesheet-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+
+  background: var(--glass-bg);
+  color: var(--text-light);
+
+  backdrop-filter: var(--glass-blur);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-timesheet-btn:hover {
+  background: var(--glass-hover);
+  border-color: var(--primary-3);
+}
