@@ -91,4 +91,13 @@
   --ts-status-pending-bg: rgba(245, 158, 11, 0.15);
   --ts-status-pending-text: #f59e0b;
 
+    /* Project Status Colors */
+  --status-active-bg: rgba(34, 197, 94, 0.15);
+  --status-active-text: #22c55e;
+
+  --status-inactive-bg: rgba(245, 158, 11, 0.15);
+  --status-inactive-text: #f59e0b;
+
+  --status-deleted-bg: rgba(239, 68, 68, 0.15);
+  --status-deleted-text: #ef4444;
 }

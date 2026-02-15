@@ -5,7 +5,8 @@ import { roleGuard } from '@core/guards/role.guard';
 export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: {roles: "Employee"},
     loadComponent: () =>
       import('./dashboard/dashboard').then((m) => m.Dashboard),
   },

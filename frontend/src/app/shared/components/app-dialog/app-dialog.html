@@ -1,0 +1,52 @@
+@if (open()) {
+
+  <!-- Backdrop -->
+  <div
+    class="dialog-backdrop"
+    tabindex="0"
+    role="button"
+    aria-label="Close dialog"
+    (click)="closeDialog()"
+    (keydown.enter)="closeDialog()"
+    (keydown.space)="closeDialog()"
+  ></div>
+
+  <!-- Dialog Container -->
+  <div class="dialog-container">
+
+    <!-- Dialog Card -->
+    <div
+      class="dialog-card"
+      role="dialog"
+      aria-modal="true"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      (keydown.space)="$event.stopPropagation()"
+    >
+
+      <!-- Header -->
+      <div class="dialog-header">
+        <h3 class="dialog-title">
+          {{ title() }}
+        </h3>
+
+        <button
+          type="button"
+          class="dialog-close-btn"
+          aria-label="Close dialog"
+          (click)="closeDialog()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="dialog-content">
+        <ng-content></ng-content>
+      </div>
+
+    </div>
+
+  </div>
+
+}

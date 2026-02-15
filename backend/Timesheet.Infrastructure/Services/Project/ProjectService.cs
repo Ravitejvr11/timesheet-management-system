@@ -124,4 +124,51 @@ public class ProjectService(AppDbContext context, IMapper mapper) : IProjectServ
 
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<ProjectDto>> GetAllProjectsAsync()
+    {
+        return await context.Projects
+            .Where(p => p.Status != ProjectStatus.Deleted)
+            .Select(p => new ProjectDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Code = p.Code,
+                ClientName = p.ClientName,
+                IsBillable = p.IsBillable,
+                Status = p.Status
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<ManagerEmployeeDto>> GetEmployeesForManagerAsync(Guid managerId)
+    {
+        return await context.EmployeeManagers
+            .Where(me => me.ManagerId == managerId)
+            .Join(context.Users,
+                  me => me.EmployeeId,
+                  user => user.Id,
+                  (me, user) => new ManagerEmployeeDto
+                  {
+                      Id = user.Id,
+                      Name = user.UserName
+                  })
+            .ToListAsync();
+    }
+
+    public async Task<List<ManagerEmployeeDto>> GetEmployeesByProjectAsync(int projectId)
+    {
+        return await context.EmployeeProjects
+            .Where(ep => ep.ProjectId == projectId)
+            .Join(context.Users,
+                  ep => ep.EmployeeId,
+                  user => user.Id,
+                  (ep, user) => new ManagerEmployeeDto
+                  {
+                      Id = user.Id,
+                      Name = user.UserName
+                  })
+            .ToListAsync();
+    }
+
 }

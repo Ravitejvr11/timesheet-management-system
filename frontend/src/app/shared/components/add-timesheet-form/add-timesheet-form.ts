@@ -72,8 +72,6 @@ export class AddTimesheetForm {
 
   // DUPLICATE CHECK
   isDuplicate = computed(() => {
-    console.log("hit");
-
     if (!this.projectId() || !this.weekFrom() || !this.weekTo()) {
       return false;
     }

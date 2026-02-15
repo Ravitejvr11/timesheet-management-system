@@ -1,0 +1,114 @@
+.multi-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Trigger */
+.multi-select-trigger {
+  background: var(--surface-input);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-light);
+}
+
+.multi-select-trigger:hover {
+  background: var(--surface-input-focus);
+}
+
+.placeholder {
+  color: var(--text-muted);
+}
+
+.selected-count {
+  font-weight: 500;
+}
+
+.arrow {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Dropdown */
+.multi-select-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+
+  /* Darker Glass */
+  background: linear-gradient(
+    135deg,
+    rgba(40, 40, 80, 0.95),
+    rgba(30, 30, 70, 0.95)
+  );
+
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-strong);
+
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 9999;
+
+  padding: 0.4rem 0;
+}
+
+/* Search */
+.multi-select-search {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.multi-select-search input {
+  width: 93%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.8rem;
+  color: var(--text-light);
+  outline: none;
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.multi-select-search input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--primary-1);
+}
+
+/* Options */
+.multi-select-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-light);
+}
+
+.multi-select-option:hover {
+  background: var(--ts-hover-soft);
+}
+
+.tick {
+  font-weight: bold;
+  color: var(--primary-1);
+}
+
+/* States */
+.multi-select-loading,
+.multi-select-empty {
+  padding: 0.8rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}

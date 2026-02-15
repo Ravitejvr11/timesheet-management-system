@@ -1,0 +1,87 @@
+.manager-wrapper {
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Glass Header Shell */
+.manager-shell {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 2rem;
+  transition: var(--transition);
+}
+
+/* Header Layout */
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Title */
+.manager-title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.manager-subtitle {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* Tabs */
+.manager-tabs {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.5rem;
+}
+
+.manager-tabs a {
+  position: relative;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: var(--transition);
+  padding-bottom: 0.5rem;
+}
+
+.manager-tabs a:hover {
+  color: var(--text-light);
+}
+
+.manager-tabs a.active {
+  color: var(--text-light);
+}
+
+.manager-tabs a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--primary-1),
+    var(--primary-2)
+  );
+}
+
+/* Content Area */
+.manager-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}

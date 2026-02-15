@@ -19,6 +19,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'manager',
+    loadChildren: () =>
+      import('@features/manager/manager.routes').then(
+        (m) => m.MANAGER_ROUTES,
+      ),
+  },
+  {
     path: 'forbidden',
     loadComponent: () =>
       import('./shared/components/permission-denied/permission-denied').then(

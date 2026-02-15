@@ -1,0 +1,32 @@
+<div class="manager-wrapper">
+
+  <div class="manager-shell">
+    <div class="manager-header">
+      <div>
+        <h1 class="manager-title">Manager Dashboard</h1>
+        <p class="manager-subtitle">
+          Manage projects, approvals and reports
+        </p>
+      </div>
+
+      <nav class="manager-tabs">
+        <a routerLink="projects" routerLinkActive="active">
+          Projects
+        </a>
+
+        <a routerLink="timesheets" routerLinkActive="active">
+          Timesheets
+        </a>
+
+        <a routerLink="reports" routerLinkActive="active">
+          Reports
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="manager-content">
+    <router-outlet />
+  </div>
+
+</div>

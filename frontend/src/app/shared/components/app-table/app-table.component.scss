@@ -1,0 +1,48 @@
+.app-table-wrapper {
+  position: relative;
+
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+
+  padding: 1.5rem 1.8rem;
+  transition: var(--transition);
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.app-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-light);
+}
+
+/* Header */
+.app-table thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 1rem 0.8rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-muted);
+}
+
+/* Body */
+.app-table tbody td {
+  padding: 1rem 0.8rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.app-table tbody tr:hover {
+  background: var(--ts-hover-soft);
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}

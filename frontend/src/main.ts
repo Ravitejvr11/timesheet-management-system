@@ -9,6 +9,8 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { timesheetFeature } from './app/store/timesheet/timesheet.reducer';
 import { TimesheetEffects } from './app/store/timesheet/timesheet.effects';
+import { projectFeature } from './app/store/project/project.reducer';
+import { ProjectEffects } from './app/store/project/project.effects';
 
 
 
@@ -18,8 +20,9 @@ bootstrapApplication(App, {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStore({
       [timesheetFeature.name]: timesheetFeature.reducer,
+      [projectFeature.name]: projectFeature.reducer,
     }),
-    provideEffects([TimesheetEffects]),
+    provideEffects([TimesheetEffects, ProjectEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

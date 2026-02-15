@@ -1,0 +1,73 @@
+<div class="multi-select-wrapper">
+
+  <!-- Trigger -->
+  <div
+    class="multi-select-trigger"
+    role="button"
+    tabindex="0"
+    (click)="toggleDropdown()"
+    (keydown.enter)="toggleDropdown()"
+  >
+    @if (selectedIds().length === 0) {
+      <span class="placeholder">Select employees</span>
+    } @else {
+      <span class="selected-count">
+        {{ selectedIds().length }} selected
+      </span>
+    }
+
+    <span class="arrow">▾</span>
+  </div>
+
+  <!-- Dropdown -->
+  @if (open()) {
+
+    <div class="multi-select-dropdown">
+
+      <!-- Search -->
+      <div class="multi-select-search">
+        <input
+          type="text"
+          placeholder="Search employee..."
+          [value]="search()"
+          (input)="search.set($any($event.target).value)"
+        />
+      </div>
+
+      <!-- Loading -->
+      @if (loading()) {
+        <div class="multi-select-loading">
+          Loading...
+        </div>
+      }
+
+      <!-- Options -->
+      @if (!loading() && filteredOptions().length === 0) {
+        <div class="multi-select-empty">
+          No employees found
+        </div>
+      }
+
+      @for (option of filteredOptions(); track option.id) {
+        <div
+          class="multi-select-option"
+          tabindex="0"
+          role="button"
+          (click)="toggleSelection(option.id)"
+          (keydown)="toggleSelection(option.id)"
+        >
+
+          <span>{{ option.name }}</span>
+
+          @if (isSelected(option.id)) {
+            <span class="tick">✓</span>
+          }
+
+        </div>
+      }
+
+    </div>
+
+  }
+
+</div>

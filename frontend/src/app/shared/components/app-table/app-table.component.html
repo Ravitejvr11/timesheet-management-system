@@ -1,0 +1,57 @@
+<div class="app-table-wrapper">
+
+  @if (loading()) {
+    <app-spinner [overlay]="true"></app-spinner>
+  }
+
+  <table class="app-table">
+    <thead>
+      <tr>
+        @for (col of columns(); track col.header) {
+          <th [style.width]="col.width ?? 'auto'">
+            {{ col.header }}
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @if (data().length === 0 && !loading()) {
+        <tr>
+          <td
+            class="empty"
+            [attr.colspan]="columns().length"
+          >
+            No data available
+          </td>
+        </tr>
+      }
+
+      @for (row of data(); track $index) {
+        <tr>
+
+          @for (col of columns(); track col.header) {
+            <td>
+
+              @if (col.template) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    col.template;
+                    context: { $implicit: row }
+                  "
+                />
+              }
+              @else {
+                {{ getCellValue(row, col.field) }}
+              }
+
+            </td>
+          }
+
+        </tr>
+      }
+
+    </tbody>
+  </table>
+</div>
