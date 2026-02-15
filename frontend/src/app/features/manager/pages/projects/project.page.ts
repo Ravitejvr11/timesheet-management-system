@@ -69,10 +69,10 @@ export class ProjectPage {
   isFormValid = computed(() => {
     return (
       this.formCode().trim().length > 0 &&
+      !this.isDuplicateCode() &&
       this.formName().trim().length > 0 &&
       this.formClientName().trim().length > 0 &&
-      this.selectedEmployeeIds().length > 0 &&
-      !this.isDuplicateCode()
+      this.selectedEmployeeIds().length > 0
     );
   });
 
@@ -210,6 +210,7 @@ export class ProjectPage {
   }
 
   openAdd(): void {
+    this.selectedProject.set(null);
     this.isEditMode.set(false);
     this.dialogOpen.set(true);
 
@@ -224,6 +225,7 @@ export class ProjectPage {
   }
 
   openEdit(project: Project): void {
+    this.selectedProject.set(project);
     this.isEditMode.set(true);
     this.dialogOpen.set(true);
 
