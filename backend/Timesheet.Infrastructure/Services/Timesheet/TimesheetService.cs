@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Timesheet.Application.Reports;
 using Timesheet.Application.Timesheets.DTO;
 using Timesheet.Application.Timesheets.Interfaces;
 using Timesheet.Application.Timesheets.Strategies;
@@ -158,6 +159,101 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
 
         await context.SaveChangesAsync();
     }
+
+    public async Task<ProjectHoursSummary> GetProjectWiseHoursSummary(TimeReportFilter filter)
+    {
+        var query = BuildBaseQuery(filter);
+
+        var groupedData = await query
+                                    .GroupBy(e => 1)
+                                    .Select(g => new
+                                    {
+                                        TotalBillableHours = g.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                        TotalNonBillableHours = g.Sum(x => (decimal?)x.NonBillableHours) ?? 0,
+
+                                        Projects = g
+                                            .GroupBy(e => new
+                                            {
+                                                e.Timesheet.ProjectId,
+                                                ProjectName = e.Timesheet.Project.Name
+                                            })
+                                            .Select(pg => new
+                                            {
+                                                pg.Key.ProjectId,
+                                                pg.Key.ProjectName,
+
+                                                BillableHours = pg.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                                NonBillableHours = pg.Sum(x => (decimal?)x.NonBillableHours) ?? 0,
+
+                                                Employees = pg
+                                                    .GroupBy(e => new
+                                                    {
+                                                        e.Timesheet.EmployeeId,
+                                                        EmployeeName = e.Timesheet.Employee.UserName
+                                                    })
+                                                    .Select(eg => new
+                                                    {
+                                                        eg.Key.EmployeeId,
+                                                        eg.Key.EmployeeName,
+
+                                                        BillableHours = eg.Sum(x => (decimal?)x.BillableHours) ?? 0,
+                                                        NonBillableHours = eg.Sum(x => (decimal?)x.NonBillableHours) ?? 0
+                                                    })
+                                                    .ToList()
+                                            })
+                                            .ToList()
+                                    })
+                                    .FirstOrDefaultAsync();
+
+        // 🔹 Handle empty result
+        if (groupedData == null)
+        {
+            return new ProjectHoursSummary();
+        }
+
+        // 🔹 Map to DTO
+        return new ProjectHoursSummary
+        {
+            TotalBillableHours = groupedData.TotalBillableHours,
+            TotalNonBillableHours = groupedData.TotalNonBillableHours,
+
+            Projects = groupedData.Projects.Select(p => new ProjectBillableDto
+            {
+                ProjectId = p.ProjectId,
+                ProjectName = p.ProjectName,
+                BillableHours = p.BillableHours,
+                NonBillableHours = p.NonBillableHours,
+
+                Employees = p.Employees.Select(e => new EmployeeBillableDto
+                {
+                    EmployeeId = e.EmployeeId,
+                    EmployeeName = e.EmployeeName,
+                    BillableHours = e.BillableHours,
+                    NonBillableHours = e.NonBillableHours
+                }).ToList()
+
+            }).ToList()
+        };
+    }
+
+
+    private IQueryable<TimesheetEntry> BuildBaseQuery(TimeReportFilter filter)
+    {
+        var query = context.TimesheetEntries.AsNoTracking().Where(e => e.WorkDate >= filter.FromDate && e.WorkDate <= filter.ToDate);
+
+        if (filter.EmployeeIds != null && filter.EmployeeIds.Any())
+        {
+            query = query.Where(e => filter.EmployeeIds.Contains(e.Timesheet.EmployeeId));
+        }
+
+        if (filter.ProjectIds != null && filter.ProjectIds.Any())
+        {
+            query = query.Where(e => filter.ProjectIds.Contains(e.Timesheet.ProjectId));
+        }
+
+        return query;
+    }
+
 
     private static void CalculateTotals(Domain.Entities.Timesheet timesheet)
     {
