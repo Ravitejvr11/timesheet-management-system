@@ -7,6 +7,7 @@ import { TimesheetService } from '@core/services/timesheet.service';
 import { timesheetFeature } from './timesheet.reducer';
 import { Store } from '@ngrx/store';
 import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class TimesheetEffects {
@@ -14,6 +15,7 @@ export class TimesheetEffects {
   private projectService = inject(ProjectService);
   private timesheetService = inject(TimesheetService);
   private store = inject(Store);
+  private router = inject(Router);
 
   // load projects
   loadProjects$ = createEffect(() =>
@@ -46,7 +48,7 @@ export class TimesheetEffects {
             weekEndDate,
           })
           .pipe(
-            map(() => TimesheetActions.createTimesheetSuccess()),
+            map((timesheet) => TimesheetActions.createTimesheetSuccess({ timesheet })),
             catchError((error) =>
               of(
                 TimesheetActions.createTimesheetFailure({
@@ -143,4 +145,22 @@ export class TimesheetEffects {
       ),
     ),
   );
+
+  navigateAfterCreate$ = createEffect(
+  () =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.createTimesheetSuccess),
+      map(({ timesheet }) => {
+        this.router.navigate([
+          '/dashboard',
+          'timesheets',
+          timesheet?.id,
+          'entry'
+        ]);
+      })
+    ),
+  { dispatch: false }
+);
+
+
 }

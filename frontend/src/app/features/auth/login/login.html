@@ -13,13 +13,16 @@
         />
       </div>
 
-      <div class="input-group">
-        <input
-          type="password"
-          placeholder="Password"
-          [value]="password()"
-          (input)="password.set($any($event.target).value)"
-        />
+      <div class="input-group password-group">
+        <input [type]="showPassword() ? 'text' : 'password'" placeholder="Password" [value]="password()"
+          (input)="password.set($any($event.target).value)" />
+        <button type="button" class="eye-toggle" (click)="showPassword.set(!showPassword())">
+          @if (showPassword()) {
+          👁️
+          } @else {
+          🙈
+          }
+        </button>
       </div>
 
       <button

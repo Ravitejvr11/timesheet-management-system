@@ -15,6 +15,7 @@ import { AuthService } from '@core/services/auth.service';
 export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
+  showPassword = signal(false);
 
   constructor() {
     const token = this.authService.getToken();

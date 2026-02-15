@@ -19,6 +19,12 @@
   <!-- Week Selection -->
   <div class="form-group">
     <label for="weekFromAdd">Select Week (Monday only)</label>
+    @if (isDuplicate()) {
+      <br>
+      <p class="error">
+        Timesheet already exists for this week.
+      </p>
+    }
 
     <input id="weekFromAdd" type="date" [min]="minDate()" [value]="weekFrom()"
       (change)="setWeek($any($event.target).value)" />

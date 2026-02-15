@@ -22,6 +22,7 @@ import { AddTimesheetForm } from 'src/app/shared/components/add-timesheet-form/a
 import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
 import { Actions, ofType } from '@ngrx/effects';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,6 +44,7 @@ export class Dashboard implements OnInit {
   loading = this.store.selectSignal(
     timesheetFeature.selectLoading,
   );
+  private router = inject(Router);
 
 
   isAddDialogOpen = signal(false);
