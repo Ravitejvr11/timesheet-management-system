@@ -25,15 +25,17 @@ the following layers:
 -   Timesheet.Domain\
 -   Timesheet.Infrastructure
 
-### Layer Responsibilities
+------------------------------------------------------------------------
 
-#### Domain Layer
+## Layer Responsibilities
+
+### Domain Layer
 
 -   Core business entities\
 -   Enums (e.g., TimesheetStatus)\
 -   Business models without external dependencies
 
-#### Application Layer
+### Application Layer
 
 -   DTOs (Request/Response models)\
 -   Service interfaces and implementations\
@@ -41,7 +43,7 @@ the following layers:
 -   Mapping logic\
 -   Application-level workflows
 
-#### Infrastructure Layer
+### Infrastructure Layer
 
 -   Entity Framework Core\
 -   DbContext configuration\
@@ -49,7 +51,7 @@ the following layers:
 -   JWT authentication handling\
 -   Database persistence logic
 
-#### API Layer
+### API Layer
 
 -   Controllers\
 -   Middleware\
@@ -63,15 +65,19 @@ the following layers:
 
 Authentication is implemented using JWT (JSON Web Tokens).
 
-Flow: 1. User logs in and receives a JWT token.\
-2. Token includes a userId claim.\
-3. Middleware validates the token.\
-4. Controllers extract user claims.\
-5. Role-based authorization controls access to endpoints.
+Flow:
 
-The system ensures: - Employees can create and submit timesheets.\
-- Managers can approve or reject timesheets.\
-- Only authorized users can access specific project data.
+1.  User logs in and receives a JWT token.\
+2.  Token includes a userId claim.\
+3.  Middleware validates the token.\
+4.  Controllers extract user claims.\
+5.  Role-based authorization controls access to endpoints.
+
+The system ensures:
+
+-   Employees can create and submit timesheets.\
+-   Managers can approve or reject timesheets.\
+-   Only authorized users can access specific project data.
 
 ------------------------------------------------------------------------
 
@@ -115,10 +121,12 @@ Unit tests focus on validating the Application layer independently from
 infrastructure concerns. Business rules are tested in isolation to
 ensure correctness, maintainability, and regression safety.
 
-Testing approach: - Mocked dependencies using test doubles.\
-- Validation of both success and failure scenarios.\
-- Coverage for approval workflow rules.\
-- Protection against invalid state transitions.
+Testing approach:
+
+-   Mocked dependencies using test doubles.\
+-   Validation of both success and failure scenarios.\
+-   Coverage for approval workflow rules.\
+-   Protection against invalid state transitions.
 
 This ensures that critical business workflows remain stable and reliable
 as the application evolves.
@@ -183,44 +191,49 @@ predictable application behavior.
 
 ### Backend
 
-dotnet restore\
-dotnet run --project Timesheet.API
+    dotnet restore
+    dotnet run --project Timesheet.API
 
 ### Frontend
 
-npm install\
-ng serve
+    npm install
+    ng serve
 
 ------------------------------------------------------------------------
 
-## For testing
+## For Testing
 
 ### Managers
-User name     |      Password
--------------------------------------
-Ravi          |      Manager1@123
-Tej           |      Manager2@123
 
-
+  User Name   Password
+  ----------- --------------
+  Ravi        Manager1@123
+  Tej         Manager2@123
 
 ### Employees
-User Name     |      Password         |    Manager
---------------------------------------------------
-Arya          |      Password@123     |    Ravi
-Bruce         |      Password@123     |    Ravi
-Jamie         |      Password@123     |    Ravi
-John          |      Password@123     |    Tej
-Tony          |      Password@123     |    Tej
 
-
-################################## NOTE ##########################################
-
----------------------------------------------------------------------------------------------
-To run the project in local you need a connection string. Please ask for it.
-No Credentials are exposed in setting, You need to configure it using - dotnet user-secrets
----------------------------------------------------------------------------------------------
+  User Name   Password       Manager
+  ----------- -------------- ---------
+  Arya        Password@123   Ravi
+  Bruce       Password@123   Ravi
+  Jamie       Password@123   Ravi
+  John        Password@123   Tej
+  Tony        Password@123   Tej
 
 ------------------------------------------------------------------------
+
+## Note
+
+To run the project locally you need a connection string.
+
+No credentials are exposed in settings. You need to configure it using:
+
+    dotnet user-secrets
+
+Please request the connection string separately.
+
+------------------------------------------------------------------------
+
 ## Conclusion
 
 This project demonstrates structured architectural thinking, clean
