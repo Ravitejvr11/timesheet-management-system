@@ -41,11 +41,8 @@ export class Dashboard implements OnInit {
   private authStore = inject(AuthStore);
   private elementRef = inject(ElementRef);
   private actions$ = inject(Actions);
-  loading = this.store.selectSignal(
-    timesheetFeature.selectLoading,
-  );
+  loading = this.store.selectSignal(timesheetFeature.selectLoading);
   private router = inject(Router);
-
 
   isAddDialogOpen = signal(false);
 
@@ -126,14 +123,20 @@ export class Dashboard implements OnInit {
   }
 
   getTotalBillableHours(): number {
-    return this.timesheets().reduce((sum, t) => sum + t.totalBillableHours, 0);
+    const total = this.timesheets().reduce(
+      (sum, t) => sum + t.totalBillableHours,
+      0,
+    );
+
+    return Math.round(total * 100) / 100;
   }
 
   getTotalNonBillableHours(): number {
-    return this.timesheets().reduce(
+    const total = this.timesheets().reduce(
       (sum, t) => sum + t.totalNonBillableHours,
       0,
     );
+    return Math.round(total * 100) / 100;
   }
 
   toggleDropdown(): void {

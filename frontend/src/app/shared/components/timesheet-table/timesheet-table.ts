@@ -73,7 +73,8 @@ export class TimesheetTable {
   }
 
   getTotalHours(row: TimesheetRow): number {
-    return row.totalBillableHours + row.totalNonBillableHours;
+    const total = row.totalBillableHours + row.totalNonBillableHours;
+    return Math.round(total * 100) / 100;
   }
 
   getStatusLabel(status: number): string {
