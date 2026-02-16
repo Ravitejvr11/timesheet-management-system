@@ -1,5 +1,8 @@
 # Timesheet Management System
 
+🚀 **Live Demo:**  
+👉 https://green-cliff-0975f9000-preview.eastasia.4.azurestaticapps.net
+
 ## Overview
 
 The Timesheet Management System is a full-stack enterprise-style
