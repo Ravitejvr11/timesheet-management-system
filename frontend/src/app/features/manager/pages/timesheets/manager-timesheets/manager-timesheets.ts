@@ -9,11 +9,12 @@ import { AppTable } from 'src/app/shared/components/app-table/app-table.componen
 import { AppDialog } from 'src/app/shared/components/app-dialog/app-dialog';
 import { TimesheetActions } from 'src/app/store/timesheet/timesheet.action';
 import { timesheetFeature } from 'src/app/store/timesheet/timesheet.reducer';
+import { Spinner } from 'src/app/shared/components/spinner/spinner';
 
 @Component({
   standalone: true,
   selector: 'app-manager-timesheets',
-  imports: [CommonModule, AppTable, AppDialog],
+  imports: [CommonModule, AppTable, AppDialog, Spinner],
   templateUrl: './manager-timesheets.html',
   styleUrl: './manager-timesheets.scss',
 })

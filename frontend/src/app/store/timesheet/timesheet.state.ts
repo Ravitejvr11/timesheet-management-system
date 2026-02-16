@@ -1,4 +1,5 @@
 import type { Project } from '@core/models/project/project.model';
+import type { ProjectHoursSummary } from '@core/models/reports/project-hours-summay.model';
 import type { ManagerTimesheet } from '@core/models/timesheet/manager-timesheet.model';
 import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
@@ -15,6 +16,8 @@ export interface TimesheetState {
   managerTimesheets: ManagerTimesheet[];
   managerLoading: boolean;
   approvalLoading: boolean;
+  reportSummary: ProjectHoursSummary | null;
+  reportLoading: boolean;
 }
 
 export const initialTimesheetState: TimesheetState = {
@@ -29,6 +32,8 @@ export const initialTimesheetState: TimesheetState = {
   managerTimesheets: [],
   managerLoading: false,
   approvalLoading: false,
+  reportSummary: null,
+  reportLoading: false,
 };
 
 export interface UpdateTimesheetRequest {

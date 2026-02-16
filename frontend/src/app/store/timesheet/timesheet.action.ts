@@ -4,6 +4,7 @@ import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewMod
 import type { TimesheetDetailModel } from '@core/models/timesheet/timesheet-details.model';
 import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.model';
 import type { ManagerTimesheet } from '@core/models/timesheet/manager-timesheet.model';
+import type { ProjectHoursSummary, TimeReportFilter } from '@core/models/reports/project-hours-summay.model';
 
 export const TimesheetActions = createActionGroup({
   source: 'Timesheet',
@@ -65,5 +66,10 @@ export const TimesheetActions = createActionGroup({
     'Reject Timesheet': props<{ id: number; comments: string }>(),
     'Reject Timesheet Success': props<{ id: number; comments: string }>(),
     'Reject Timesheet Failure': props<{ error: string }>(),
+
+    'Load Report Summary': props<{ filter: TimeReportFilter }>(),
+    'Load Report Summary Success': props<{ summary: ProjectHoursSummary }>(),
+    'Load Report Summary Failure': props<{ error: string }>(),
+
   },
 });

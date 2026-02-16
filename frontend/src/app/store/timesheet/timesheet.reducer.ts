@@ -173,5 +173,22 @@ export const timesheetFeature = createFeature({
       approvalLoading: false,
       error,
     })),
+
+    on(TimesheetActions.loadReportSummary, (state) => ({
+      ...state,
+      reportLoading: true,
+    })),
+
+    on(TimesheetActions.loadReportSummarySuccess, (state, { summary }) => ({
+      ...state,
+      reportLoading: false,
+      reportSummary: summary,
+    })),
+
+    on(TimesheetActions.loadReportSummaryFailure, (state, { error }) => ({
+      ...state,
+      reportLoading: false,
+      error,
+    })),
   ),
 });

@@ -219,4 +219,24 @@ export class TimesheetEffects {
       ),
     ),
   );
+
+  loadReportSummary$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TimesheetActions.loadReportSummary),
+      switchMap(({ filter }) =>
+        this.timesheetService.getReportSummary(filter).pipe(
+          map((summary) =>
+            TimesheetActions.loadReportSummarySuccess({ summary }),
+          ),
+          catchError((error) =>
+            of(
+              TimesheetActions.loadReportSummaryFailure({
+                error: error?.message ?? 'Failed to load report',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

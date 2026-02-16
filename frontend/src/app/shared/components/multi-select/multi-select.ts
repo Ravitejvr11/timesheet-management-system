@@ -45,6 +45,7 @@ export class MultiSelect implements OnInit, OnDestroy {
 
   options = input.required<MultiSelectOption[]>();
   selectedIds = input.required<string[]>();
+  placeholder = input.required<string>();
   loading = input<boolean>(false);
 
   selectionChange = output<string[]>();

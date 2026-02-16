@@ -1,0 +1,154 @@
+<div class="manager-reports-page">
+  <div class="reports-filter-card">
+
+    <div class="filter-group">
+      <label for="form-date">From Date</label>
+      <input type="date" [value]="fromDate()" (change)="fromDate.set($any($event.target).value)" />
+    </div>
+
+    <div class="filter-group">
+      <label for="to-date">To Date</label>
+      <input type="date" [value]="toDate()" (change)="toDate.set($any($event.target).value)" />
+    </div>
+
+    <div class="filter-group wide">
+      <label for="employees">Employees</label>
+      <app-multi-select [options]="employeeOptions()" [selectedIds]="selectedEmployeeIds()"
+        (selectionChange)="selectedEmployeeIds.set($event)" placeholder="Select employees" />
+    </div>
+
+    <div class="filter-group wide">
+      <label for="projects">Projects</label>
+      <app-multi-select [options]="projectOptions()" [selectedIds]="selectedProjectIds()"
+        (selectionChange)="selectedProjectIds.set($event)" placeholder="Select projects" />
+    </div>
+
+
+    <div class="filter-actions">
+      <button class="generate-btn" (click)="loadReport()" [disabled]="!fromDate() || !toDate()">
+        Generate Report
+      </button>
+    </div>
+
+  </div>
+
+  @if (summary()) {
+
+  <div class="kpi-grid">
+
+    <div class="kpi-card total">
+      <div class="kpi-title">Total Hours</div>
+      <div class="kpi-value">
+        {{ totalHours() }}
+      </div>
+    </div>
+
+    <div class="kpi-card billable">
+      <div class="kpi-title">Billable Hours</div>
+      <div class="kpi-value">
+        {{ totalBillable() }}
+      </div>
+    </div>
+
+    <div class="kpi-card non-billable">
+      <div class="kpi-title">Non-Billable Hours</div>
+      <div class="kpi-value">
+        {{ totalNonBillable() }}
+      </div>
+    </div>
+
+  </div>
+
+  }
+
+  @if (loading()) {
+  <app-spinner [overlay]="true"></app-spinner>
+  }
+
+  @if (summary()?.projects?.length) {
+  <div class="project-breakdown-card">
+
+    <h3 class="section-title">Project Breakdown</h3>
+
+    @for (p of summary()?.projects ?? []; track p.projectId) {
+
+    <div class="project-card">
+
+      <!-- PROJECT HEADER -->
+      <div class="project-header" (click)="toggleProject(p.projectId)" (keyup.enter)="toggleProject(p.projectId)"
+        tabindex="0">
+
+        <div class="project-left">
+          <div class="project-name">
+            {{ p.projectName }}
+          </div>
+
+          <div class="project-subtext">
+            {{ p.totalHours }} hrs total
+          </div>
+        </div>
+
+        <div class="project-right">
+
+          <span class="report-badge billable">
+            B: {{ p.billableHours }}
+          </span>
+
+          <span class="report-badge non-billable">
+            NB: {{ p.nonBillableHours }}
+          </span>
+
+          <span class="report-badge total">
+            Total: {{ p.totalHours }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- EMPLOYEE BREAKDOWN -->
+      @if (expandedProjectId() === p.projectId) {
+
+      <div class="employee-breakdown">
+
+        @for (e of p.employees; track e.employeeId) {
+
+        <div class="employee-row">
+
+          <div class="employee-name">
+            {{ e.employeeName }}
+          </div>
+
+          <div class="employee-hours">
+
+            <span class="report-badge billable">
+              B: {{ e.billableHours }}
+            </span>
+
+            <span class="report-badge non-billable">
+              NB: {{ e.nonBillableHours }}
+            </span>
+
+            <span class="report-badge total">
+              Total: {{ e.totalHours }}
+            </span>
+
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+      }
+
+    </div>
+
+    }
+
+  </div>
+
+  }
+
+</div>

@@ -103,7 +103,7 @@
       <label for="assign-employee">Assign Employees <span class="required">*</span> </label>
 
       <app-multi-select [options]="employees()" [selectedIds]="selectedEmployeeIds()" [loading]="employeesLoading()"
-        (selectionChange)="onEmployeeSelectionChange($event)" />
+        (selectionChange)="onEmployeeSelectionChange($event)" placeholder="Select employees"/>
     </div>
 
     <div class="form-group">

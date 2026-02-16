@@ -9,7 +9,7 @@
     (keydown.enter)="toggleDropdown()"
   >
     @if (selectedIds().length === 0) {
-      <span class="placeholder">Select employees</span>
+      <span class="placeholder">{{ placeholder() }}</span>
     } @else {
       <span class="selected-count">
         {{ selectedIds().length }} selected
@@ -28,7 +28,7 @@
       <div class="multi-select-search">
         <input
           type="text"
-          placeholder="Search employee..."
+          [placeholder]="placeholder() + '...'"
           [value]="search()"
           (input)="search.set($any($event.target).value)"
         />

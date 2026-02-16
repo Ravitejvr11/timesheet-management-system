@@ -29,13 +29,13 @@ export const MANAGER_ROUTES: Routes = [
             (m) => m.ManagerTimesheets,
           ),
       },
-      // {
-      //   path: 'reports',
-      //   loadComponent: () =>
-      //     import('./pages/reports/manager-reports').then(
-      //       (m) => m.ManagerReports,
-      //     ),
-      // },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./pages/reports/manager-reports/manager-reports').then(
+            (m) => m.ManagerReports,
+          ),
+      },
     ],
   },
 ];

@@ -10,16 +10,13 @@
     </div>
   </div>
 
-  <!-- Loading -->
-  @if (loading()) {
-  <div class="manager-loading-card">
-    Loading timesheets...
-  </div>
-  }
-
   <!-- Table -->
   @if (!loading()) {
   <div class="manager-content-card">
+
+    @if (loading()) {
+      <app-spinner [overlay]="true"></app-spinner>
+    }
 
     <table class="approval-table">
       <thead>

@@ -6,6 +6,10 @@ import type { AddTimesheetPayload } from '@core/models/timesheet/timesheet-add.m
 import type { TimesheetViewModel } from '@core/models/timesheet/timesheetViewModel';
 import type { UpdateTimesheetRequest } from 'src/app/store/timesheet/timesheet.state';
 import type { ManagerTimesheet } from '@core/models/timesheet/manager-timesheet.model';
+import type {
+  TimeReportFilter,
+  ProjectHoursSummary,
+} from '@core/models/reports/project-hours-summay.model';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +63,13 @@ export class TimesheetService {
           'Content-Type': 'application/json',
         },
       },
+    );
+  }
+
+  getReportSummary(filter: TimeReportFilter): Observable<ProjectHoursSummary> {
+    return this.http.post<ProjectHoursSummary>(
+      `${this.baseUrl.replace('timesheets', 'report')}/analytics`,
+      filter,
     );
   }
 }
