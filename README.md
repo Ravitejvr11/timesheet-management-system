@@ -205,10 +205,8 @@ predictable application behavior.
 
 ### Managers
 
-  User Name   Password
-  ----------- --------------
-  Ravi        Manager1@123
-  Tej         Manager2@123
+  User Name -  Ravi         Password - Manager1@123
+  User Name - Tej         Password - Manager2@123
 
 ### Employees
 
