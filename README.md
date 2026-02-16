@@ -3,6 +3,31 @@
 🚀 **Live Demo:**  
 👉 https://green-cliff-0975f9000-preview.eastasia.4.azurestaticapps.net
 
+------------------------------------------------------------------------
+
+## Test Credentials
+
+### Managers
+
+| Name  | Password       |
+|-------|---------------|
+| Ravi  | Manager1@123  |
+| Tej   | Manager2@123  |
+
+---
+
+### Employees
+
+| Name  | Password       | Manager |
+|-------|---------------|---------|
+| Arya  | Password@123  | Ravi    |
+| Bruce | Password@123  | Ravi    |
+| Jamie | Password@123  | Ravi    |
+| John  | Password@123  | Tej     |
+| Tony  | Password@123  | Tej     |
+
+--------------------------------------------------------------------
+
 ## Overview
 
 The Timesheet Management System is a full-stack enterprise-style
@@ -201,30 +226,6 @@ predictable application behavior.
 
     npm install
     ng serve
-
-------------------------------------------------------------------------
-
-## Test Credentials
-
-### Managers
-
-| Name  | Password       |
-|-------|---------------|
-| Ravi  | Manager1@123  |
-| Tej   | Manager2@123  |
-
----
-
-### Employees
-
-| Name  | Password       | Manager |
-|-------|---------------|---------|
-| Arya  | Password@123  | Ravi    |
-| Bruce | Password@123  | Ravi    |
-| Jamie | Password@123  | Ravi    |
-| John  | Password@123  | Tej     |
-| Tony  | Password@123  | Tej     |
-
 
 ------------------------------------------------------------------------
 
