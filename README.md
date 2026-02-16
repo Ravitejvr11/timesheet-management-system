@@ -204,9 +204,8 @@ predictable application behavior.
 ## For Testing
 
 ### Managers
-
-  User Name -  Ravi         Password - Manager1@123
-  User Name - Tej         Password - Manager2@123
+1. User Name -  Ravi Password - Manager1@123
+2. User Name - Tej Password - Manager2@123
 
 ### Employees
 
