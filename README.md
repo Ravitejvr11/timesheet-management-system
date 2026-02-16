@@ -201,18 +201,27 @@ predictable application behavior.
 
 ------------------------------------------------------------------------
 
-## For Testing
+## Test Credentials
 
 ### Managers
-1. User Name -  Ravi (Password) - Manager1@123
-2. User Name - Tej (Password) - Manager2@123
+
+| Name  | Password       |
+|-------|---------------|
+| Ravi  | Manager1@123  |
+| Tej   | Manager2@123  |
+
+---
 
 ### Employees
-1.User Name -  Arya (Password) - Password@123  (Manager) - Ravi
-2.User Name -  Bruce (Password) - Password@123  (Manager) - Ravi
-3.User Name -  Jamie (Password) - Password@123  (Manager) - Ravi
-4.User Name -  John (Password) - Password@123  (Manager) - Tej
-5.User Name -  Tony (Password) - Password@123  (Manager) - Tej
+
+| Name  | Password       | Manager |
+|-------|---------------|---------|
+| Arya  | Password@123  | Ravi    |
+| Bruce | Password@123  | Ravi    |
+| Jamie | Password@123  | Ravi    |
+| John  | Password@123  | Tej     |
+| Tony  | Password@123  | Tej     |
+
 
 ------------------------------------------------------------------------
 
