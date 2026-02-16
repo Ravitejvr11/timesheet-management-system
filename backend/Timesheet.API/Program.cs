@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Timesheet.API.AutoMapper;
 using Timesheet.Infrastructure.DependencyInjection;
+using Timesheet.Infrastructure.Persistence;
+using Timesheet.Infrastructure.Persistence.Seed;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,12 +83,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-// Run this once for seeding the manager record in the db.
+// Run this once for seeding the manager and users record in the db.
 // using (var scope = app.Services.CreateScope())
 // {
 //     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-//     await context.Database.MigrateAsync();
 //     await DatabaseSeeder.SeedAsync(context);
 // }
 

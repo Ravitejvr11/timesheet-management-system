@@ -288,15 +288,8 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
     {
         return await context.Timesheets
             .Where(t =>
-                (t.TotalBillableHours > 0 || t.TotalNonBillableHours > 0) &&
-                context.EmployeeManagers.Any(em =>
-                    em.ManagerId == managerId &&
-                    em.EmployeeId == t.EmployeeId
-                ) &&
-                context.EmployeeProjects.Any(ep =>
-                    ep.EmployeeId == t.EmployeeId &&
-                    ep.ProjectId == t.ProjectId
-                )
+                t.Project.ManagerId == managerId &&
+                (t.TotalBillableHours > 0 || t.TotalNonBillableHours > 0)
             )
             .Include(t => t.Employee)
             .Include(t => t.Project)
@@ -326,6 +319,5 @@ public class TimesheetService(AppDbContext context, IEnumerable<ITimesheetStatus
             ))
             .ToListAsync();
     }
-
 
 }

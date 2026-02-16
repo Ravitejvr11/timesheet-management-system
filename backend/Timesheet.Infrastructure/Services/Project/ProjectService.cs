@@ -26,18 +26,18 @@ public class ProjectService(AppDbContext context, IMapper mapper) : IProjectServ
             .ToListAsync();
     }
 
-    public async Task CreateProject(ProjectDto dto)
+    public async Task CreateProject(Guid managerId, ProjectDto dto)
     {
         var project = mapper.Map<Domain.Entities.Project>(dto);
 
-        // Map employees
+        project.ManagerId = managerId;
+
         project.EmployeeProjects = dto.EmployeeIds
             .Select(empId => new EmployeeProject
             {
                 EmployeeId = empId
             })
             .ToList();
-
 
         await context.Projects.AddAsync(project);
         await context.SaveChangesAsync();
@@ -113,10 +113,13 @@ public class ProjectService(AppDbContext context, IMapper mapper) : IProjectServ
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<ProjectDto>> GetAllProjectsAsync()
+    public async Task<List<ProjectDto>> GetAllProjectsAsync(Guid managerId)
     {
         return await context.Projects
-            .Where(p => p.Status != ProjectStatus.Deleted)
+            .Where(p =>
+                p.ManagerId == managerId &&
+                p.Status != ProjectStatus.Deleted
+            )
             .Select(p => new ProjectDto
             {
                 Id = p.Id,

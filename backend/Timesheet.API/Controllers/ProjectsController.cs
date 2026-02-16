@@ -8,7 +8,7 @@ namespace Timesheet.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class ProjectsController(IProjectService projectService) : ControllerBase
+public class ProjectsController(IProjectService projectService) : BaseController
 {
     [HttpGet("my")]
     public async Task<IActionResult> GetMyProjects()
@@ -29,7 +29,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> GetAll()
     {
-        var projects = await projectService.GetAllProjectsAsync();
+        var managerId = GetUserId();
+
+        var projects = await projectService.GetAllProjectsAsync(managerId);
+
         return Ok(projects);
     }
 
@@ -37,7 +40,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Create([FromBody] ProjectDto dto)
     {
-        await projectService.CreateProject(dto);
+        var managerId = GetUserId();
+
+        await projectService.CreateProject(managerId, dto);
+
         return Ok();
     }
 

@@ -9,7 +9,7 @@ namespace Timesheet.API.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 public class TimesheetsController(ITimesheetService timesheetService)
-    : ControllerBase
+    : BaseController
 {
     [HttpGet("my")]
     [Authorize(Roles = "Employee")]
@@ -86,16 +86,6 @@ public class TimesheetsController(ITimesheetService timesheetService)
             .RejectTimesheetAsync(managerId, id, comments);
 
         return NoContent();
-    }
-
-    private Guid GetUserId()
-    {
-        var claim = User.FindFirst("userId")?.Value;
-
-        if (string.IsNullOrWhiteSpace(claim))
-            throw new UnauthorizedAccessException();
-
-        return Guid.Parse(claim);
     }
 
     [HttpGet]

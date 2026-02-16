@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Timesheet.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Timesheet.Infrastructure.Persistence.Migrations
+namespace Timesheet.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260214103230_AddTimesheetAndEntries_v2")]
-    partial class AddTimesheetAndEntries_v2
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +90,9 @@ namespace Timesheet.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsBillable")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -101,6 +101,8 @@ namespace Timesheet.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("Projects");
                 });
@@ -257,6 +259,17 @@ namespace Timesheet.Infrastructure.Persistence.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Timesheet.Domain.Entities.Project", b =>
+                {
+                    b.HasOne("Timesheet.Domain.Entities.User", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("Timesheet.Domain.Entities.Timesheet", b =>

@@ -6,15 +6,14 @@ public interface IProjectService
 {
     Task<List<ProjectDto>> GetProjectsForEmployeeAsync(Guid employeeId);
 
-    Task CreateProject(ProjectDto dto);
-
+    Task CreateProject(Guid managerId, ProjectDto dto);
     Task UpdateProject(ProjectDto dto);
 
     Task Deactivate(int projectId);
 
     Task Activate(int projectId);
 
-    Task<List<ProjectDto>> GetAllProjectsAsync();
+    Task<List<ProjectDto>> GetAllProjectsAsync(Guid managerId);
 
     Task<List<ManagerEmployeeDto>> GetEmployeesForManagerAsync(Guid managerId);
 

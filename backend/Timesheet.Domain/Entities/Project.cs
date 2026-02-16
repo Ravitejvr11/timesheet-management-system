@@ -17,6 +17,8 @@ public class Project
     public bool IsBillable { get; set; }
 
     public string? Description { get; set; }
+    public Guid ManagerId { get; set; }
+    public User Manager { get; set; } = null!;
 
     // Navigation
     public ICollection<EmployeeProject> EmployeeProjects { get; set; } = new List<EmployeeProject>();
