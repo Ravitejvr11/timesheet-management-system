@@ -49,8 +49,8 @@ export class ProjectEffects {
   updateProject$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ProjectActions.updateProject),
-      mergeMap(({ id, request }) =>
-        this.projectService.update(id, request).pipe(
+      mergeMap(({ request }) =>
+        this.projectService.update(request).pipe(
           map(() => ProjectActions.loadProjects()),
           catchError((error) =>
             of(

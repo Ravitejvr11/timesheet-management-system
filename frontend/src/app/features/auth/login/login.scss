@@ -90,11 +90,6 @@ button {
   color: var(--text-dark);
 }
 
-button:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-soft);
-}
-
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;

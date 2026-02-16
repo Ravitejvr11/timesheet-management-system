@@ -8,6 +8,7 @@ export interface CreateProjectRequest {
   isBillable: boolean;
   description?: string | null;
   employeeIds: string[];
+  id?: number;
 }
 
 export type UpdateProjectRequest = CreateProjectRequest

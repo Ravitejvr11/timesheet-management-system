@@ -22,6 +22,7 @@ import { ProjectActions } from 'src/app/store/project/project.actions';
 import { AppDialog } from 'src/app/shared/components/app-dialog/app-dialog';
 import { MultiSelect } from 'src/app/shared/components/multi-select/multi-select';
 import { Actions, ofType } from '@ngrx/effects';
+import type { CreateProjectRequest } from '@core/models/project/create-project.model';
 
 @Component({
   standalone: true,
@@ -193,10 +194,6 @@ export class ProjectPage {
     this.openEdit(project);
   }
 
-  onDelete(project: Project): void {
-    console.log('Delete', project);
-  }
-
   toggleActionMenu(id: number): void {
     this.activeMenuId.update((current) => (current === id ? null : id));
   }
@@ -252,7 +249,7 @@ export class ProjectPage {
   submit(): void {
     if (!this.isFormValid()) return;
 
-    const request = {
+    const request: CreateProjectRequest = {
       name: this.formName(),
       code: this.formCode(),
       status: ProjectStatus.Active, // default
@@ -263,9 +260,9 @@ export class ProjectPage {
     };
 
     if (this.isEditMode() && this.selectedProject()) {
+      request.id = this.selectedProject()!.id
       this.store.dispatch(
         ProjectActions.updateProject({
-          id: this.selectedProject()!.id,
           request,
         }),
       );

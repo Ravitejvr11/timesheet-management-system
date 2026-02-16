@@ -13,7 +13,7 @@ export const ProjectActions = createActionGroup({
     'Create Project': props<{ request: CreateProjectRequest }>(),
     'Create Project Success': props<{ project: Project }>(),
     'Create Project Failure': props<{ error: string }>(),
-    'Update Project': props<{ id: number; request: UpdateProjectRequest }>(),
+    'Update Project': props<{ request: UpdateProjectRequest }>(),
     'Update Project Success': props<{ project: Project }>(),
     'Update Project Failure': props<{ error: string }>(),
     'Activate Project': props<{ id: number }>(),
